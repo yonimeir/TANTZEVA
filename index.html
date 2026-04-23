@@ -51,12 +51,15 @@
             
             <!-- תצוגה של משנה שנבחרה -->
             <div class="mishnah-preview" style="display: none;">
-                <div id="mishnah-display" class="mishnah-content"></div>
+                <div id="mishnayot-display" class="mishnah-content"></div>
             </div>
             
             <!-- רשימת משניות שנבחרו -->
             <div class="selected-mishnayot-section">
-                <h3>משניות שנבחרו</h3>
+                <div class="section-header-row">
+                    <h3>משניות שנבחרו</h3>
+                    <button id="copy-selected" class="action-button copy-button" style="display: none;">העתק הכל לצילום קליפבורד</button>
+                </div>
                 <div id="selected-mishnayot-list" class="selected-mishnayot-list"></div>
             </div>
         </div>
@@ -71,6 +74,7 @@
                     <div id="modal-preview-content">
                         <h4 id="modal-preview-title"></h4>
                         <div id="modal-preview-text"></div>
+                        <div id="modal-preview-commentary"></div>
                     </div>
                 </div>
                 
@@ -82,7 +86,7 @@
                         <span class="checkmark"></span>
                         הצג פירוש ברטנורא
                     </label>
-                    <button id="select-mishna-button" class="select-button">בחר משנה זו</button>
+                    <button id="modal-confirm-selection" class="select-button">בחר משנה זו</button>
                 </div>
                 </div>
         </div> 

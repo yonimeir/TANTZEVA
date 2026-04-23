@@ -862,8 +862,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Fetch from Sefaria API
             const masechetApiName = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
-             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
-             const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
+            
+            // Special handling for Pirkei Avot because Sefaria doesn't use the 'Mishnah ' prefix for it
+            const apiBaseText = masechetApiName === 'Pirkei_Avot' ? 'Pirkei_Avot' : `Mishnah_${masechetApiName}`;
+            
+            const mishnahUrl = `https://www.sefaria.org/api/texts/${apiBaseText}.${perekNum}.${mishnahNum}?context=0`;
+            const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_${apiBaseText}.${perekNum}.${mishnahNum}?context=0`;
 
             console.log("Fetching from Sefaria API:", mishnahUrl);
             fetch(mishnahUrl)
@@ -927,9 +931,12 @@ document.addEventListener('DOMContentLoaded', function() {
        function displayMishnah(mishnayaData) {
             // Clear previous content except title if it exists
             const existingTitle = mishnayotDisplay.querySelector('h3');
+            const spinnerElement = mishnayotDisplay.querySelector('.spinner-container');
             const textElement = mishnayotDisplay.querySelector('.mishnah-text');
             const commentaryElement = mishnayotDisplay.querySelector('.bartenura-text');
             const errorElement = mishnayotDisplay.querySelector('.error-text');
+            
+            if (spinnerElement) spinnerElement.remove();
             if (textElement) textElement.remove();
             if (commentaryElement) commentaryElement.remove();
             if (errorElement) errorElement.remove();
@@ -993,7 +1000,8 @@ document.addEventListener('DOMContentLoaded', function() {
              }
 
             const masechetApiName = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
-             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
+             const apiBaseTextModal = masechetApiName === 'Pirkei_Avot' ? 'Pirkei_Avot' : `Mishnah_${masechetApiName}`;
+             const mishnahUrl = `https://www.sefaria.org/api/texts/${apiBaseTextModal}.${perekNum}.${mishnahNum}?context=0`;
              console.log("Fetching for modal:", mishnahUrl);
              fetch(mishnahUrl)
                  .then(response => {
