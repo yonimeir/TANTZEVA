@@ -12,7 +12,8 @@
         // Init the app when ready
         document.addEventListener('DOMContentLoaded', () => {
             if (window.runNiftarApp) {
-                window.runNiftarApp(window.mishnahIndex);
+                // mishnahIndex is defined as const, so it's not on the window object
+                window.runNiftarApp(typeof mishnahIndex !== 'undefined' ? mishnahIndex : null);
             }
         });
     </script>
@@ -93,16 +94,6 @@
         <div id="error-message" class="error-message" style="display: none;"></div>
     </div>
     
-    <!-- הוראות הפעלת שרת פיתוח מקומי -->
-    <div class="dev-instructions">
-        <h3>הוראות להפעלת האתר מקומית:</h3>
-        <ol>
-            <li>התקן Node.js מ-<a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a> אם טרם התקנת</li>
-            <li>התקן את כלי ה-live-server הגלובלי: <code>npm install -g live-server</code></li>
-            <li>הפעל את השרת בתיקיית הפרויקט: <code>live-server</code></li>
-            <li>השרת יפתח אוטומטית את הדפדפן עם הכתובת <code>http://localhost:8080</code></li>
-        </ol>
-        <p>הערה: השימוש בשרת פיתוח מקומי פותר את בעיית ה-CORS בטעינת קבצי JSON מקומיים.</p>
-    </div>
+
 </body>
 </html>
