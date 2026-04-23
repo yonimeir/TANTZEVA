@@ -9,13 +9,10 @@
     <script src="mishnah_mappings.js"></script>
     <script src="niftar.js"></script>
     <script>
-        // Init the app when ready
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.runNiftarApp) {
-                // mishnahIndex is defined as const, so it's not on the window object
-                window.runNiftarApp(typeof mishnahIndex !== 'undefined' ? mishnahIndex : null);
-            }
-        });
+        // Init the app synchronously so the inner DOMContentLoaded listener in niftar.js registers in time
+        if (window.runNiftarApp) {
+            window.runNiftarApp(typeof mishnahIndex !== 'undefined' ? mishnahIndex : null);
+        }
     </script>
 </head>
 <body>
