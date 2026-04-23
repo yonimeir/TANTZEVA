@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לימוד לעילוי נשמת - משניות ותהילים</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3f51b5;
+        }
+        
+        .name-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        
+        .name-input-container input {
+            flex: 1;
+            max-width: 300px;
+            font-size: 18px;
+            padding: 10px;
+            border: 2px solid #3f51b5;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .letter-boxes-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .letter-box {
+            display: flex;
+            flex-direction: column;
+            width: 120px;
+            height: 140px;
+            border: 2px solid #3f51b5;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        
+        .letter-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        .letter-box.selected {
+            border-color: #1a237e;
+            background-color: #e8eaf6;
+        }
+        
+        .letter-box .letter {
+            font-size: 42px;
+            font-weight: bold;
+            color: #3f51b5;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e8eaf6;
+            border-bottom: 1px solid #3f51b5;
+            width: 100%;
+        }
+        
+        .letter-box .mishnah-info {
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mishnah-preview {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 800px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .mishnah-preview h3 {
+            text-align: center;
+            color: #3f51b5;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .alphabet-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 30px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .alphabet-buttons button {
+            min-width: 40px;
+            height: 40px;
+            font-size: 18px;
+            background-color: #3f51b5;
+            color: white;
+            border: 1px solid #3f51b5;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .alphabet-buttons button:hover {
+            background-color: #1a237e;
+            transform: scale(1.1);
+        }
+        
+        .alphabet-buttons button.in-name {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+        
+        .alphabet-buttons button.has-mishnah {
+            background-color: #ff9800;
+            border-color: #ff9800;
+        }
+        
+        .control-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .control-buttons button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .control-buttons button:hover {
+            background-color: #1a237e;
+        }
+        
+        /* סגנון מודלי מיוחד */
+        .mishnah-modal-content {
+            max-width: 800px;
+            padding: 30px;
+        }
+        
+        .mishnah-list {
+            border-radius: 10px;
+            background-color: white;
+        }
+        
+        .mishnah-list div {
+            padding: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .mishnah-list div:hover {
+            background-color: #e8eaf6;
+        }
+        
+        .content-display {
+            line-height: 1.8;
+            font-size: 18px;
+        }
+        
+        .mishnah-text {
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            border-right: 3px solid #3f51b5;
+        }
+        
+        .commentary-title {
+            color: #2d3a8c;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .commentary-text {
+            font-size: 16px;
+            line-height: 1.7;
+            padding: 10px;
+            background-color: #f8f9ff;
+            border-radius: 5px;
+            border-right: 3px solid #7986cb;
+            margin-top: 10px;
+        }
+        
+        .mishnah-preview .options {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .mishnah-preview .options label {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .mishnah-preview .options input[type="checkbox"] {
+            margin-left: 8px;
+        }
+        
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            border-right: 4px solid #c62828;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 5px;
+            border-right: 4px solid #2e7d32;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        /* סגנון לטבלת המשניות שנבחרו */
+        .selected-mishnayot-table-container {
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .selected-mishnayot-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .selected-mishnayot-table th {
+            background-color: #3f51b5;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+        }
+        
+        .selected-mishnayot-table tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        
+        .selected-mishnayot-table tr:hover {
+            background-color: #e8eaf6;
+        }
+        
+        .selected-mishnayot-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .selected-mishnayot-table .view-button,
+        .selected-mishnayot-table .replace-button,
+        .selected-mishnayot-table .remove-button {
+            margin: 0 3px;
+            padding: 5px 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .selected-mishnayot-table .view-button {
+            background-color: #3f51b5;
+        }
+        
+        .selected-mishnayot-table .view-button:hover {
+            background-color: #2c3e91;
+        }
+        
+        .selected-mishnayot-table .replace-button {
+            background-color: #ff9800;
+        }
+        
+        .selected-mishnayot-table .replace-button:hover {
+            background-color: #e68900;
+        }
+        
+        .selected-mishnayot-table .remove-button {
+            background-color: #f44336;
+        }
+        
+        .selected-mishnayot-table .remove-button:hover {
+            background-color: #d32f2f;
+        }
+        
+        /* סגנון לחלון המודלי לבחירת משנה */
+        .mishnah-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .mishnah-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .close-modal:hover {
+            color: #000;
+        }
+        
+        .mishnah-list {
+            margin-top: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .mishnah-list-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .mishnah-list-item:hover {
+            background-color: #e8eaf6;
+        }
+        
+        .mishnah-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #777;
+        }
+        
+        /* סגנון עבור תצוגה מקדימה במודל */
+        .modal-content-wrapper {
+            display: flex;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .mishnah-list {
+            margin-top: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .modal-preview {
+            margin-top: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            min-width: 0;
+            position: relative;
+        }
+        
+        .preview-empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #777;
+            font-style: italic;
+            text-align: center;
+            min-height: 100px;
+        }
+        
+        .preview-content {
+            padding: 10px;
+        }
+        
+        .mishnah-list-item.selected {
+            background-color: #e3f2fd;
+            border-right: 4px solid #3f51b5;
+        }
+        
+        .mishnah-list-item.loading {
+            opacity: 0.6;
+            cursor: default;
+        }
+        
+        .select-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .select-button:hover {
+            background-color: #388e3c;
+        }
+        
+        .select-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        /* סגנונות למסכתות מקובצות במודל */
+        .masechet-group {
+            margin-bottom: 5px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .masechet-header {
+            background-color: #e8eaf6;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #3f51b5;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+            border-right: 4px solid #3f51b5;
+        }
+        
+        .masechet-header:hover {
+            background-color: #c5cae9;
+        }
+        
+        .expand-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 18px;
+            margin-left: 10px;
+            font-weight: bold;
+            border-radius: 50%;
+            background-color: #3f51b5;
+            color: white;
+        }
+        
+        .masechet-name {
+            flex-grow: 1;
+        }
+        
+        .masechet-count {
+            color: #777;
+            font-size: 0.9em;
+        }
+        
+        .masechet-content {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+        }
+        
+        .masechet-content .mishnah-list-item {
+            padding: 8px 15px 8px 40px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .masechet-content .mishnah-list-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bsd">בס"ד</div>
+    
+    <div class="page-header">
+        <h1>לעילוי נשמת</h1>
+    </div>
+
+    <nav class="main-nav">
+        <a href="index.html">דף ראשי</a> |
+        <a href="mishnah_regular.html">לימוד משניות</a> |
+        <a href="niftar.html" class="active">לע"נ נפטר</a> |
+            <a href="tehillim.html">תהילים לע"נ</a> |
+        <a href="print.html">הדפסה</a>
+        </nav>
+
+    <div class="main-container">
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        
+        <div class="name-input-container">
+            <label for="niftar-name">שם:</label>
+            <input type="text" id="niftar-name" placeholder="הכנס שם הנפטר כאן" autofocus>
+            <button id="process-name-button" class="btn">הצג</button>
+        </div>
+
+        <div id="name-letters-display" style="display: none;">
+            <h2 class="text-center">לעילוי נשמת <span id="processed-name"></span></h2>
+            
+            <div class="letter-boxes-container" id="letter-boxes">
+                <!-- תיבות האותיות יתווספו כאן דינמית -->
+            </div>
+            
+            <div class="mishnah-preview">
+                <h3>תצוגה מקדימה משנה</h3>
+                <div class="options">
+                    <label>
+                        <input type="checkbox" id="show-bartenura-checkbox" checked>
+                        הצג פירוש רע"ב (אם זמין)
+                    </label>
+                </div>
+                <div id="mishnah-display" class="content-display">
+                    <!-- כאן תוצג המשנה -->
+                </div>
+            </div>
+            
+            <h3 class="text-center">בחירה לפי אות</h3>
+            <div class="alphabet-buttons" id="alphabet-buttons">
+                <!-- כפתורי הא"ב יתווספו כאן דינמית -->
+            </div>
+            
+            <div class="control-buttons">
+                <button id="random-select-button">בחר משניות אקראית</button>
+                <button id="add-neshamah-button">הוסף אותיות "נשמה"</button>
+                <button id="clear-selections-button">נקה בחירות</button>
+                <button id="prepare-print-button">הכן להדפסה</button>
+            </div>
+            
+            <!-- רשימת המשניות שנבחרו -->
+            <div class="section" id="selected-mishnayot-section">
+                <h3>המשניות שנבחרו</h3>
+                <div id="selected-mishnayot-list" class="selected-mishnayot-table-container">
+                    <!-- הטבלה תתווסף כאן באמצעות JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- חלון מודלי לבחירת משנה -->
+    <div id="mishnah-modal" class="mishnah-modal">
+        <div class="mishnah-modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>בחר משנה לאות <span id="modal-letter"></span></h2>
+            <div class="modal-content-wrapper">
+                <div class="mishnah-list" id="modal-mishnah-list">
+                    <!-- רשימת משניות המתחילות באות הנבחרת תוצג כאן -->
+                </div>
+                <div class="modal-preview" id="modal-preview">
+                    <div class="preview-empty-state">בחר משנה מהרשימה כדי לראות תצוגה מקדימה</div>
+                    <div class="preview-content" id="modal-preview-content" style="display: none;">
+                        <h3 id="modal-preview-title" class="mishnah-title"></h3>
+                        <div id="modal-preview-text" class="mishnah-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        טקסטים נלקחו מה-API של <a href="https://www.sefaria.org" target="_blank" rel="noopener noreferrer">ספריה (Sefaria.org)</a> בכפוף לתנאי השימוש
+    </footer>
+
+    <!-- טעינת קבצי JavaScript ללא defer -->
+    <script src="גרסה יציבה לשימור/mishnah_index.js"></script>
+    <script src="niftar.js"></script> <!-- מגדיר את window.runNiftarApp -->
+    <script>
+        // בלוק זה רץ מיד אחרי ששני הקבצים לעיל נטענו והתבצעו
+        console.log('HTML INLINE SCRIPT: Checking window.mishnahIndex and window.runNiftarApp');
+        if (typeof window.mishnahIndex !== 'undefined' && Array.isArray(window.mishnahIndex)) {
+            console.log('HTML INLINE SCRIPT: Found valid window.mishnahIndex. Length:', window.mishnahIndex.length);
+            if (typeof window.runNiftarApp === 'function') {
+                console.log('HTML INLINE SCRIPT: Found runNiftarApp function. Calling it now.');
+                window.runNiftarApp(window.mishnahIndex);
+                // אפשר לשקול למחוק את המשתנה הגלובלי אחרי השימוש אם רוצים
+                // try { delete window.mishnahIndex; } catch(e) { window.mishnahIndex = undefined; }
+                // try { delete window.runNiftarApp; } catch(e) { window.runNiftarApp = undefined; }
+            } else {
+                console.error('HTML INLINE SCRIPT: CRITICAL - runNiftarApp function NOT DEFINED by niftar.js!');
+                alert('שגיאה קריטית: פונקציית האתחול המרכזית (runNiftarApp) לא הוגדרה כראוי.\nלא ניתן להפעיל את האפליקציה.');
+            }
+        } else {
+            console.error('HTML INLINE SCRIPT: CRITICAL - window.mishnahIndex is UNDEFINED or NOT AN ARRAY immediately after its script!');
+            alert('שגיאה קריטית: נתוני אינדקס המשניות (window.mishnahIndex) לא נטענו כראוי.\nלא ניתן להפעיל את האפליקציה.');
+            // במקרה כזה, אפשר לקרוא ל runNiftarApp עם null כדי שהיא תציג את השגיאה הפנימית שלה
+             if (typeof window.runNiftarApp === 'function') {
+                console.warn('HTML INLINE SCRIPT: Calling runNiftarApp with null due to missing mishnahIndex.');
+                window.runNiftarApp(null);
+            } else {
+                 console.error('HTML INLINE SCRIPT: runNiftarApp function not defined, cannot even report index loading failure properly.');
+            }
+        }
+    </script>
+</body>
+</html>

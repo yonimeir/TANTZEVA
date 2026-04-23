@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לעילוי נשמת - משניות</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="mishnah_index.js"></script>
+    <script src="mishnah_mappings.js"></script>
+    <script src="niftar.js"></script>
+    <script>
+        // Init the app when ready
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.runNiftarApp) {
+                window.runNiftarApp(window.mishnahIndex);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>משניות לעילוי נשמת</h1>
+        </header>
+        
+        <div class="main-content">
+            <!-- טופס הזנת שם הנפטר -->
+            <div class="name-input-section">
+                <div class="name-input-container">
+                    <input type="text" id="niftar-name" placeholder="הכנס שם מלא של הנפטר/ת">
+                    <button id="process-name-button">עבד שם</button>
+                </div>
+                
+                <div id="name-letters-display" style="display: none;">
+                    <div class="letters-header">
+                        <h2>אותיות השם: <span id="processed-name"></span></h2>
+</div>
+
+                    <div id="letter-boxes" class="letter-boxes-container"></div>
+                    
+                    <div class="alphabet-section">
+                        <div id="alphabet-buttons" class="alphabet-buttons-container"></div>
+                </div>
+                    
+                    <div class="action-buttons">
+                        <button id="random-select-button">בחר משניות אקראיות</button>
+                        <button id="add-neshamah-button">הוסף משניות נשמ"ה</button>
+                        <button id="clear-selections-button">נקה בחירות</button>
+                        <button id="prepare-print-button">הכן להדפסה</button>
+                </div>
+                </div>
+            </div>
+            
+            <!-- תצוגה של משנה שנבחרה -->
+            <div class="mishnah-preview" style="display: none;">
+                <div id="mishnah-display" class="mishnah-content"></div>
+            </div>
+            
+            <!-- רשימת משניות שנבחרו -->
+            <div class="selected-mishnayot-section">
+                <h3>משניות שנבחרו</h3>
+                <div id="selected-mishnayot-list" class="selected-mishnayot-list"></div>
+            </div>
+        </div>
+        
+        <!-- מודל בחירת משניות -->
+        <div id="mishnah-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>בחר משנה לאות <span id="modal-letter"></span></h3>
+                
+                <div id="modal-preview" class="modal-preview" style="display: none;">
+                    <div id="modal-preview-content">
+                        <h4 id="modal-preview-title"></h4>
+                        <div id="modal-preview-text"></div>
+                    </div>
+                </div>
+                
+                <div id="modal-mishnah-list" class="modal-mishnah-list"></div>
+            
+                <div class="modal-actions">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="show-bartenura-checkbox">
+                        <span class="checkmark"></span>
+                        הצג פירוש ברטנורא
+                    </label>
+                    <button id="select-mishna-button" class="select-button">בחר משנה זו</button>
+                </div>
+                </div>
+        </div> 
+
+        <!-- הודעות שגיאה/הצלחה -->
+        <div id="error-message" class="error-message" style="display: none;"></div>
+    </div>
+    
+    <!-- הוראות הפעלת שרת פיתוח מקומי -->
+    <div class="dev-instructions">
+        <h3>הוראות להפעלת האתר מקומית:</h3>
+        <ol>
+            <li>התקן Node.js מ-<a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a> אם טרם התקנת</li>
+            <li>התקן את כלי ה-live-server הגלובלי: <code>npm install -g live-server</code></li>
+            <li>הפעל את השרת בתיקיית הפרויקט: <code>live-server</code></li>
+            <li>השרת יפתח אוטומטית את הדפדפן עם הכתובת <code>http://localhost:8080</code></li>
+        </ol>
+        <p>הערה: השימוש בשרת פיתוח מקומי פותר את בעיית ה-CORS בטעינת קבצי JSON מקומיים.</p>
+    </div>
+</body>
+</html>

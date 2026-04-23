@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תהילים לעילוי נשמת - פרק קי"ט לפי אותיות</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .letter-section {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .letter-heading {
+            font-size: 24px;
+            color: #3f51b5;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tehillim-verse {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .name-letters-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .letter-badge {
+            display: inline-block;
+            background-color: #3f51b5;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .tehillim-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .tehillim-tab {
+            padding: 8px 15px;
+            background-color: #e8eaf6;
+            border: 1px solid #c5cae9;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tehillim-tab.active {
+            background-color: #3f51b5;
+            color: white;
+            font-weight: bold;
+        }
+        .tehillim-tab:hover {
+            background-color: #c5cae9;
+        }
+        .tehillim-content {
+            margin-top: 20px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .cemetery-prayers {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .cemetery-prayers h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        .prayer-text {
+            margin: 15px 0;
+            line-height: 1.7;
+            font-size: 1.1em;
+        }
+        
+        .add-all-verses-button {
+            display: block;
+            margin: 15px auto 5px;
+            padding: 10px 15px;
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .add-all-verses-button:hover {
+            background-color: #283593;
+        }
+        
+        .add-all-verses-button:disabled {
+            background-color: #c5cae9;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bsd">בס"ד</div>
+    <h1>תהילים לעילוי נשמת</h1>
+
+    <nav class="main-nav">
+        <a href="index.html">דף ראשי</a> |
+        <a href="mishnah_regular.html">לימוד משניות</a> |
+        <a href="niftar.html">לע"נ נפטר</a> |
+        <a href="tehillim.html" class="active">תהילים לע"נ</a> |
+        <a href="print.html">הדפסה</a>
+    </nav>
+
+    <div class="main-container">
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        
+        <div class="section">
+            <h2>בחירת שם נפטר</h2>
+            
+            <div class="input-group">
+                <label for="niftar-name">שם הנפטר:</label>
+                <input type="text" id="niftar-name" placeholder="הכנס שם (למשל: חיים צבי)" autofocus>
+                <button id="process-name-button">הצג פרק קי"ט לפי אותיות השם</button>
+            </div>
+
+            <div id="name-letters-display" style="margin-top: 15px; display: none;">
+                <h3>אותיות מהשם: <span id="processed-name"></span></h3>
+                
+                <div class="name-letters-container" id="name-letters-container">
+                    <!-- האותיות יתווספו כאן דינמית -->
+                </div>
+            </div>
+            
+            <div class="tehillim-tabs" id="tehillim-tabs">
+                <div class="tehillim-tab active" data-tab="letters-tab">תהילים קי"ט לפי אותיות</div>
+                <div class="tehillim-tab" data-tab="cemetery-tab">תפילות לקבר</div>
+                <div class="tehillim-tab" data-tab="chapters-tab">פרקי תהילים נבחרים</div>
+            </div>
+            
+            <div class="tehillim-content">
+                <div class="tab-content active" id="letters-tab">
+                    <div id="tehillim119-content">
+                        <!-- תוכן של פרק קי"ט לפי אותיות יתווסף כאן דינמית -->
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="cemetery-tab">
+                    <div class="cemetery-prayers">
+                        <h3>תפילות בבית העלמין</h3>
+                        
+                        <div class="prayer-text">
+                            <h4>תפילה לפני אמירת תהילים</h4>
+                            <p>לשם יחוד קודשא בריך הוא ושכינתיה, בדחילו ורחימו, ליחדא שם י"ה בו"ה ביחודא שלים בשם כל ישראל, הנני מוכן ומזומן להתפלל ולקרוא תהילים לעילוי נשמת [שם הנפטר] בן/בת [שם ההורים], יהי רצון מלפניך ה' אלוהינו ואלוהי אבותינו, שתהא אמירת התהילים הזאת לנחת רוח ולזכות ולמליץ יושר עבור נשמתו/ה. ויהי רצון שתעלה נשמתו/ה מדרגה אחר מדרגה, למקום הראוי לו/ה בגן עדן, ולמנוחה נכונה על כנפי השכינה, בטח ובבטחה עם שאר הצדיקים והצדקניות שבגן עדן.</p>
+                        </div>
+                        
+                        <div class="prayer-text">
+                            <h4>אל מלא רחמים</h4>
+                            <p>אֵל מָלֵא רַחֲמִים, שׁוֹכֵן בַּמְּרוֹמִים, הַמְצֵא מְנוּחָה נְכוֹנָה עַל כַּנְפֵי הַשְּׁכִינָה בְּמַעֲלוֹת קְדוֹשִׁים וּטְהוֹרִים כְּזֹהַר הָרָקִיעַ מַזְהִירִים, לְנִשְׁמַת [שם הנפטר] בן/בת [שם ההורים] שֶׁהָלַךְ/הָלְכָה לְעוֹלָמוֹ/לְעוֹלָמָהּ, בְּגַן עֵדֶן תְּהֵא מְנוּחָתוֹ/מְנוּחָתָהּ. לָכֵן בַּעַל הָרַחֲמִים יַסְתִּירֵהוּ/יַסְתִּירֶהָ בְּסֵתֶר כְּנָפָיו לְעוֹלָמִים, וְיִצְרֹר בִּצְרוֹר הַחַיִּים אֶת נִשְׁמָתוֹ/נִשְׁמָתָהּ, ה' הוּא נַחֲלָתוֹ/נַחֲלָתָהּ, וְיָנוּחַ/וְתָנוּחַ בְּשָׁלוֹם עַל מִשְׁכָּבוֹ/מִשְׁכָּבָהּ, וְנֹאמַר אָמֵן.</p>
+                        </div>
+                        
+                        <div class="prayer-text">
+                            <h4>תפילה בסיום הלימוד לעילוי נשמה</h4>
+                            <p>יהי רצון מלפניך ה' אלוהינו ואלוהי אבותינו, שתעלה קריאת הפסוקים ופרקי התהילים שקראנו לפניך, כאילו אמרם דוד המלך עליו השלום בעצמו, ותעלה לעילוי נשמת [שם הנפטר] בן/בת [שם ההורים], ויהיו דברים אלו פרקליטים טובים בינו/בינה לבינך להליץ יושר עבורו/עבורה ולהתעלות מעלה מעלה במעלות הצדיקים וחסידים, ויהי נועם ה' אלוהינו עלינו ומעשה ידינו כוננה עלינו ומעשה ידינו כוננהו. אמן.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="chapters-tab">
+                    <h3>פרקי תהילים מומלצים לאמירה לעילוי נשמת</h3>
+                    <ul>
+                        <li><button class="chapter-button" data-chapter="16">פרק ט"ז</button> - "מכתם לדוד, שמרני אל כי חסיתי בך..."</li>
+                        <li><button class="chapter-button" data-chapter="17">פרק י"ז</button> - "תפילה לדוד, שמעה ה' צדק..."</li>
+                        <li><button class="chapter-button" data-chapter="23">פרק כ"ג</button> - "מזמור לדוד, ה' רועי לא אחסר..."</li>
+                        <li><button class="chapter-button" data-chapter="25">פרק כ"ה</button> - "לדוד, אליך ה' נפשי אשא..."</li>
+                        <li><button class="chapter-button" data-chapter="33">פרק ל"ג</button> - "רננו צדיקים בה', לישרים נאוה תהילה..."</li>
+                        <li><button class="chapter-button" data-chapter="91">פרק צ"א</button> - "יושב בסתר עליון..."</li>
+                        <li><button class="chapter-button" data-chapter="104">פרק ק"ד</button> - "ברכי נפשי את ה', ה' אלוהי גדלת מאד..."</li>
+                        <li><button class="chapter-button" data-chapter="130">פרק ק"ל</button> - "ממעמקים קראתיך ה'..."</li>
+                        <li><button class="chapter-button" data-chapter="142">פרק קמ"ב</button> - "משכיל לדוד, בהיותו במערה, תפילה..."</li>
+                        <li><button class="chapter-button" data-chapter="150">פרק ק"נ</button> - "הללויה, הללו אל בקדשו..."</li>
+                    </ul>
+                    
+                    <div id="selected-chapter-content" class="content-display" style="display: none; margin-top: 20px;">
+                        <!-- תוכן הפרק הנבחר יוצג כאן -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section" id="print-section" style="display: none;">
+            <h2>הכנה להדפסה</h2>
+            <p>כאן תוכל להכין דף להדפסה עם התהילים הרלוונטיים.</p>
+            <button id="prepare-print-button">הכן להדפסה</button>
+        </div>
+    </div>
+
+    <footer>
+        טקסטים נלקחו מה-API של <a href="https://www.sefaria.org" target="_blank" rel="noopener noreferrer">ספריה (Sefaria.org)</a> בכפוף לתנאי השימוש
+    </footer>
+
+    <script src="tehillim119_data.js"></script>
+    <script src="tehillim.js"></script>
+</body>
+</html>

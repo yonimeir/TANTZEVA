@@ -1,0 +1,377 @@
+/* עיצוב בסיסי ומשופר */
+body {
+    font-family: Assistant, Arial, Helvetica, sans-serif; 
+    line-height: 1.6;
+    padding: 15px;
+    max-width: 900px; 
+    margin: 0 auto; 
+    direction: rtl; 
+    background-color: #f4f4f4; 
+    color: #333; 
+}
+
+/* כותרות */
+.header-bsd {
+    text-align: right;
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #1a237e; 
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+h2 {
+    color: #3949ab; 
+    border-bottom: 2px solid #c5cae9; 
+    padding-bottom: 8px;
+    margin-top: 30px; 
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+h3 {
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 30px 0; 
+}
+
+/* קונטיינר ראשי וסקשנים */
+.main-container {
+    margin-top: 20px;
+}
+
+.section {
+    margin-bottom: 25px;
+    padding: 20px; 
+    border: 1px solid #d1d1d1;
+    border-radius: 8px; 
+    background-color: #ffffff; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
+
+/* אלמנטים אינטראקטיביים */
+button, select, input[type="text"] {
+    padding: 8px 12px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin: 5px; 
+}
+
+button {
+    cursor: pointer;
+    background-color: #5c6bc0; 
+    color: white;
+    border: none;
+    transition: background-color 0.2s ease; 
+}
+
+button:hover {
+    background-color: #3f51b5; 
+}
+
+.letter-button {
+    min-width: 40px; 
+    background-color: #7986cb; 
+}
+.letter-button:hover {
+     background-color: #5c6bc0;
+}
+
+/* שם הנפטר והבחירות */
+#niftar-name {
+    margin-left: 10px;
+    width: 250px; 
+}
+#niftar-letters {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #1a237e;
+}
+#selected-mishnayot-list {
+    list-style: decimal; 
+    padding-right: 25px; 
+    max-height: 250px; 
+    overflow-y: auto; 
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-top: 10px;
+    background-color: #fafafa;
+    border-radius: 4px;
+}
+#selected-mishnayot-list li {
+    margin-bottom: 10px; 
+    display: flex;
+    align-items: center;
+}
+#selected-mishnayot-list button { /* כפתור ההחלפה/הסרה */
+    margin-right: 0;
+    margin-left: 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    color: #5c6bc0; /* צבע כחול לכפתור החלף */
+    background: none;
+    border: 1px solid #c5cae9; /* גבול עדין */
+    padding: 2px 5px; 
+    border-radius: 3px;
+}
+#selected-mishnayot-list button:hover {
+    background-color: #e8eaf6; 
+}
+
+
+/* ניווט */
+.navigation-controls {
+    padding: 10px 0;
+    display: flex; /* סידור בשורה */
+    flex-wrap: wrap; /* גלישה לשורה חדשה אם אין מקום */
+    align-items: center;
+}
+.navigation-controls label {
+    margin-left: 5px;
+    margin-right: 10px;
+    font-weight: 500;
+}
+.navigation-controls select {
+    padding: 6px 10px;
+    margin-left: 15px;
+    margin-bottom: 5px; /* ריווח אם גולש שורה */
+    min-width: 180px; 
+}
+#perek-mishnayot-list {
+    margin-top: 10px;
+    font-size: 1em; 
+    line-height: 1.8; 
+    padding-top: 10px;
+    border-top: 1px dashed #eee; /* הפרדה קלה */
+}
+#perek-mishnayot-list span { /* אותיות המשנה */
+    display: inline-block;
+    margin: 3px 5px;
+    cursor: pointer;
+    color: #3949ab;
+    font-weight: 500;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+#perek-mishnayot-list span:hover {
+    text-decoration: none;
+    background-color: #e8eaf6; 
+}
+
+
+/* תוצאות חיפוש מקובצות */
+#results-list {
+    padding: 0;
+    margin-top: 15px;
+}
+.masechet-group h3 {
+    background-color: #e8eaf6; 
+    padding: 8px 12px;
+    margin-top: 10px;
+    margin-bottom: 0; 
+    border-radius: 5px 5px 0 0; 
+    font-size: 1.1em;
+    cursor: pointer; 
+    border: 1px solid #c5cae9;
+    border-bottom: none; 
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+.masechet-group h3 span { /* האייקון של +/- */
+     font-weight: bold;
+     color: #3f51b5;
+     margin-right: 10px; /* ריווח מהטקסט */
+}
+.mishnayot-in-group {
+    list-style: none;
+    padding: 10px 15px 10px 25px; 
+    margin: 0 0 10px 0; 
+    border: 1px solid #c5cae9;
+    border-top: none; 
+    border-radius: 0 0 5px 5px; 
+    background-color: #fdfdfd;
+    /* חשוב: display: none יוסף או יוסר על ידי JavaScript */
+}
+.mishnayot-in-group li {
+    margin-bottom: 8px;
+    font-size: 1em; 
+    display: flex; 
+    align-items: center;
+    border-bottom: 1px dotted #eee; 
+    padding-bottom: 5px;
+}
+.mishnayot-in-group li:last-child {
+    border-bottom: none; 
+}
+.mishnayot-in-group a {
+    color: #1a237e; 
+    margin-right: 5px; 
+    flex-grow: 1; /* תן לקישור למלא את הרווח */
+}
+.select-mishnah-button { /* כפתור + */
+     font-size: 1.1em; /* קצת יותר גדול */
+     font-weight: bold;
+     cursor: pointer;
+     padding: 0px 6px; /* פחות ריווח אנכי */
+     margin-left: 10px; 
+     border: 1px solid #9fa8da;
+     background-color: #e8eaf6;
+     color: #3949ab;
+     border-radius: 3px;
+     line-height: 1; /* למנוע גובה מיותר */
+}
+.select-mishnah-button:hover {
+      background-color: #c5cae9;
+}
+
+/* אזור תצוגת התוכן (משנה/תהילים) */
+.content-display-area {
+    display: none; /* מוסתר בהתחלה */
+    margin-top: 20px; 
+    padding: 20px; /* פדינג פנימי */
+    border: 1px solid #d1d1d1; /* מסגרת כמו סקשן */
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.content-display-area h2 {
+     margin-top: 0; 
+}
+.options {
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc;
+    display: flex; /* סידור בשורה */
+    flex-wrap: wrap;
+    gap: 15px; /* רווח בין האופציות */
+}
+.content-display {
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #bcaaa4; 
+    background-color: #fffbf7; 
+    min-height: 150px;
+    white-space: pre-wrap; 
+    line-height: 1.9; 
+    font-size: 1.15em; 
+    border-radius: 5px;
+}
+#tehillim-display h4.tehillim-letter {
+     margin-top: 1.5em;
+     margin-bottom: 0.5em;
+     font-weight: bold;
+     color: #1a237e;
+     border-bottom: 1px solid #e0e0e0;
+     padding-bottom: 3px;
+}
+#tehillim-display p {
+    margin-bottom: 0.5em;
+}
+#tehillim-display .verse-num {
+     color: #777;
+     font-size: 0.9em;
+     margin-left: 5px;
+     display: inline-block; /* כדי שהמרג'ין יעבוד */
+     min-width: 25px; /* ריווח קבוע למספרים */
+}
+
+.commentary-text {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #bcaaa4; 
+    font-size: 0.95em; 
+    color: #424242; 
+    line-height: 1.7;
+}
+.commentary-text strong {
+    color: #5d4037; 
+}
+
+/* פוטר */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    font-size: 0.85em;
+    color: #666;
+}
+footer a {
+    color: #0056b3;
+    text-decoration: none;
+}
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+     .navigation-controls {
+         flex-direction: column;
+         align-items: stretch;
+     }
+     .navigation-controls select {
+         margin-left: 0;
+         margin-bottom: 10px;
+         width: 100%;
+     }
+      .options {
+         flex-direction: column;
+         align-items: flex-start; /* הצמד לשמאל */
+     }
+     .options label {
+         margin-left: 0;
+         margin-bottom: 5px;
+     }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    h1 {
+        font-size: 1.3em; /* הקטנה נוספת */
+    }
+    h2 {
+        font-size: 1.15em;
+    }
+    .section {
+         padding: 10px; /* ריווח פנימי קטן יותר */
+    }
+    #niftar-name {
+         width: calc(100% - 110px); /* התאמה לכפתור ליד */
+    }
+    .letter-button {
+        font-size: 0.95em;
+        padding: 4px 6px;
+        min-width: 30px;
+    }
+    .content-display {
+        font-size: 1.1em;
+        line-height: 1.8;
+    }
+    #selected-mishnayot-list button { /* כפתור הסרה/החלפה */
+        padding: 1px 4px;
+    }
+    .select-mishnah-button { /* כפתור + */
+        padding: 0px 5px;
+        font-size: 1em;
+    }
+}

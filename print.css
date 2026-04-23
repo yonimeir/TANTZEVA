@@ -1,0 +1,208 @@
+/* עיצוב כללי */
+@page {
+  size: A4;
+  margin: 1.5cm;
+}
+
+/* עיצוב בסיסי */
+body {
+  font-family: 'Alef', sans-serif;
+  text-align: right;
+  direction: rtl;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  color: #333;
+}
+
+/* עיצוב כללי */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* עיצוב האפשרויות של ההדפסה */
+.print-options {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+}
+
+.format-options, .action-buttons {
+  margin: 10px 0;
+}
+
+.action-buttons button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-left: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Alef', sans-serif;
+}
+
+.action-buttons button:hover {
+  background-color: #45a049;
+}
+
+/* הודעת שגיאה */
+#error-message {
+  color: #D32F2F;
+  background-color: #FFEBEE;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  display: none;
+}
+
+/* עיצוב התצוגה המקדימה */
+#print-preview {
+  display: none;
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+/* כותרת הדף */
+.print-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.bsd {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 14px;
+}
+
+.print-header h2 {
+  margin: 10px 0;
+  font-size: 24px;
+}
+
+/* מכולת האותיות */
+.letters-container {
+  margin-bottom: 30px;
+}
+
+.letters-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.letter-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #333;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* עיצוב המשניות */
+.mishnah-item {
+  margin-bottom: 40px;
+  page-break-inside: avoid;
+}
+
+.mishnah-header {
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-radius: 4px 4px 0 0;
+  border-bottom: 2px solid #ddd;
+}
+
+.mishnah-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.mishnah-text {
+  padding: 15px;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* עיצוב הפירוש */
+.commentary {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border-right: 4px solid #4CAF50;
+}
+
+.commentary h4 {
+  margin: 0 0 8px 0;
+  color: #4CAF50;
+}
+
+.commentary-text {
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* כפתורי שליטה - לא יודפסו */
+.print-controls {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* עיצוב ספציפי להדפסה */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  
+  #print-preview {
+    display: block !important;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+  
+  .mishnah-item {
+    page-break-inside: avoid;
+  }
+  
+  .print-header {
+    margin-bottom: 20px;
+  }
+  
+  /* עיצוב לפורמט חוברת */
+  body[data-print-format="booklet"] {
+    size: A5;
+  }
+  
+  body[data-print-format="booklet"] .mishnah-text,
+  body[data-print-format="booklet"] .commentary-text {
+    font-size: 12px;
+  }
+  
+  body[data-print-format="booklet"] .mishnah-header h3 {
+    font-size: 14px;
+  }
+  
+  body[data-print-format="booklet"] .commentary h4 {
+    font-size: 13px;
+  }
+} 

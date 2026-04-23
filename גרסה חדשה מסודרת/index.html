@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית משניות לעילוי נשמה</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- כותרת ראשית -->
+        <header class="app-header">
+            <h1>אפליקציית משניות לעילוי נשמה</h1>
+            <p class="subtitle">בחירת משניות לפי אותיות השם</p>
+        </header>
+
+        <!-- אזור הודעות -->
+        <div id="error-container" class="error-container" style="display: none;"></div>
+        
+        <!-- אינדיקטור טעינה -->
+        <div id="loading-indicator" class="loading-indicator" style="display: none;"></div>
+
+        <!-- קלט שם הנפטר -->
+        <section class="input-section">
+            <div class="form-group">
+                <label for="niftar-name">שם הנפטר/ת:</label>
+                <div class="input-with-button">
+                    <input type="text" id="niftar-name" placeholder="הכנס שם נפטר/ת" class="form-input">
+                    <button onclick="app.processNiftarName()" class="btn-primary">עבד שם</button>
+                </div>
+            </div>
+            <div id="niftar-name-display" class="niftar-display" style="display: none;"></div>
+        </section>
+
+        <!-- תצוגת האותיות -->
+        <section class="letters-section">
+            <div id="letters-container" class="letters-container">
+                <p>הכנס שם נפטר כדי לראות את האותיות</p>
+            </div>
+        </section>
+
+        <!-- רשימת המשניות הנבחרות -->
+        <section class="selected-section">
+            <div id="selected-mishnayot-list" class="selected-list">
+                <p>עדיין לא נבחרו משניות</p>
+            </div>
+        </section>
+
+        <!-- סטטיסטיקות -->
+        <section class="stats-section">
+            <h3>סטטיסטיקות</h3>
+            <div id="stats-container" class="stats-container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">משניות נבחרות</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">מסכתות שונות</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">אותיות שונות</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- כפתורי פעולה -->
+        <section class="actions-section">
+            <div class="actions-grid">
+                <button onclick="app.exportData()" class="btn-secondary">יצא נתונים</button>
+                <button onclick="document.getElementById('import-file').click()" class="btn-secondary">יבא נתונים</button>
+                <button onclick="app.reset()" class="btn-danger">איפוס כללי</button>
+            </div>
+            <input type="file" id="import-file" accept=".json" style="display: none;" onchange="app.importData(this.files[0])">
+        </section>
+
+        <!-- פוטר -->
+        <footer class="app-footer">
+            <p>נבנה בעזרת הקב"ה לזכר ולעילוי נשמות ישראל</p>
+        </footer>
+    </div>
+
+    <!-- טעינת קבצי הנתונים -->
+    <script src="mishnah_index.js"></script>
+    <script src="mishnah_mappings.js"></script>
+    <script src="mishnah_structure.js"></script>
+    <script src="tehillim119_data.js"></script>
+
+    <!-- טעינת המודולים -->
+    <script src="MishnahCore.js"></script>
+    <script src="DataManager.js"></script>
+    <script src="StateManager.js"></script>
+    <script src="UIManager.js"></script>
+    <script src="MishnayotApp.js"></script>
+
+    <!-- אתחול האפליקציה -->
+    <script>
+        // יצירת האפליקציה ואתחולה
+        let app;
+        
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                app = new MishnayotApp();
+                await app.initialize();
+                
+                // הגדרת מאזין לשדה שם הנפטר
+                const niftarInput = document.getElementById('niftar-name');
+                if (niftarInput) {
+                    niftarInput.addEventListener('input', (e) => {
+                        app.updateNiftarName(e.target.value);
+                    });
+                    
+                    niftarInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            app.processNiftarName();
+                        }
+                    });
+                }
+                
+                console.log('אפליקציית המשניות מוכנה לשימוש');
+                
+            } catch (error) {
+                console.error('שגיאה באתחול האפליקציה:', error);
+                alert('שגיאה באתחול האפליקציה: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html> 

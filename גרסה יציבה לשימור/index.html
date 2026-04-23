@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לימוד משניות ותהילים לע"נ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header-bsd">בס"ד</div>
+    <h1>לעילוי נשמת בניה אהרן ז"ל בן אליעזר ותמרה הי"ו</h1>
+
+    <div class="main-container">
+        <div class="section">
+            <h2>הגדרות ובחירות לעילוי נשמת</h2>
+            <label for="niftar-name">שם הנפטר:</label>
+            <input type="text" id="niftar-name" placeholder="הכנס שם (למשל בניה אהרן)">
+            <button onclick="processNameAndSuggestLetters()">הצג אותיות שם ו'נשמה'</button> 
+            <div id="niftar-letters">אותיות ללימוד: <span id="letters-to-learn"></span></div>
+
+            <button onclick="randomlySelectMishnayotForNiftar()" id="random-select-button" style="margin-top: 10px; background-color: #00796b; display: none;">בחר משניות אקראית לפי האותיות</button>
+
+            <h3>משניות שנבחרו/הוגרלו:</h3>
+            <ul id="selected-mishnayot-list">
+                <li>(עדיין לא הוגרלו משניות)</li>
+            </ul>
+            <button onclick="clearNiftarSelection()">נקה בחירה</button>
+        </div>
+
+        <hr>
+
+        <div class="section">
+            <h2>חיפוש וניווט במשנה</h2>
+
+            <div class="navigation-controls">
+                <label for="seder-select">סדר:</label>
+                <select id="seder-select" onchange="populateMasechtot()">
+                    <option value="">בחר סדר...</option>
+                </select>
+
+                <label for="masechet-select">מסכת:</label>
+                <select id="masechet-select" onchange="populatePerakim()">
+                    <option value="">בחר מסכת...</option>
+                </select>
+
+                <label for="perek-select">פרק:</label>
+                <select id="perek-select" onchange="displayMishnayotForPerek()">
+                    <option value="">בחר פרק...</option>
+                </select>
+            </div>
+             <div id="perek-mishnayot-list">
+                 </div>
+
+            <hr style="margin: 15px 0;">
+
+            <p>חיפוש משניות לפי אות ראשונה:</p>
+            <div id="letter-selector">
+                <button class="letter-button" onclick="searchByLetter('א')">א</button>
+                <button class="letter-button" onclick="searchByLetter('ב')">ב</button>
+                <button class="letter-button" onclick="searchByLetter('ג')">ג</button>
+                <button class="letter-button" onclick="searchByLetter('ד')">ד</button>
+                <button class="letter-button" onclick="searchByLetter('ה')">ה</button>
+                <button class="letter-button" onclick="searchByLetter('ו')">ו</button>
+                <button class="letter-button" onclick="searchByLetter('ז')">ז</button>
+                <button class="letter-button" onclick="searchByLetter('ח')">ח</button>
+                <button class="letter-button" onclick="searchByLetter('ט')">ט</button>
+                <button class="letter-button" onclick="searchByLetter('י')">י</button>
+                <button class="letter-button" onclick="searchByLetter('כ')">כ</button>
+                <button class="letter-button" onclick="searchByLetter('ל')">ל</button>
+                <button class="letter-button" onclick="searchByLetter('מ')">מ</button>
+                <button class="letter-button" onclick="searchByLetter('נ')">נ</button>
+                <button class="letter-button" onclick="searchByLetter('ס')">ס</button>
+                <button class="letter-button" onclick="searchByLetter('ע')">ע</button>
+                <button class="letter-button" onclick="searchByLetter('פ')">פ</button>
+                <button class="letter-button" onclick="searchByLetter('צ')">צ</button>
+                <button class="letter-button" onclick="searchByLetter('ק')">ק</button>
+                <button class="letter-button" onclick="searchByLetter('ר')">ר</button>
+                <button class="letter-button" onclick="searchByLetter('ש')">ש</button>
+                <button class="letter-button" onclick="searchByLetter('ת')">ת</button>
+                 | <button onclick="displayNeshamahMishnayot()">משניות נשמה (מקואות ז')</button>
+            </div>
+
+             <div class="content-display-area section" style="display: none;"> 
+                <h2>המשנה / תהילים:</h2>
+                <div class="options">
+                    <label>
+                        <input type="checkbox" id="show-bartenura-checkbox" onchange="refreshCurrentMishnah()">
+                        הצג פירוש רע"ב (אם זמין)
+                    </label>
+                    <button onclick="if(currentNiftarLetters.length > 0) { displayTehillimByLetters(currentNiftarLetters); } else { alert('אנא הזן שם נפטר תחילה'); }">הצג תהילים קי"ט לאותיות</button>
+                </div>
+                <div id="mishnah-display" class="content-display">
+                    (בחר משנה מהרשימה או מהניווט כדי להציג כאן)
+                </div>
+                <div id="tehillim-display" class="content-display" style="display: none;"> 
+                     (טקסט תהילים יוצג כאן)
+                </div>
+            </div>
+            <h3>תוצאות חיפוש לאות '<span id="selected-letter-display"></span>':</h3>
+            <div id="results-list">
+                </div>
+        </div> 
+
+    </div><footer>
+        טקסטים נלקחו מה-API של <a href="https://www.sefaria.org" target="_blank" rel="noopener noreferrer">ספריה (Sefaria.org)</a> בכפוף לתנאי השימוש | פותח בסיוע Gemini
+    </footer>
+
+    <script src="mishnah_mappings.js"></script> <script src="mishnah_index.js"></script>    <script src="tehillim119_data.js"></script> <script src="app.js"></script>             
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לימוד משניות - ניווט קלאסי</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header-bsd">בס"ד</div>
+    <h1>לימוד משניות לפי סדר קלאסי</h1>
+
+    <nav class="main-nav">
+            <a href="index.html">דף ראשי</a> |
+        <a href="mishnah_regular.html" class="active">לימוד משניות</a> |
+        <a href="niftar.html">לע"נ נפטר</a> |
+            <a href="tehillim.html">תהילים לע"נ</a> |
+        <a href="print.html">הדפסה</a>
+        </nav>
+
+    <div class="main-container">
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        
+        <div class="section">
+            <h2>ניווט במשנה</h2>
+            
+            <div class="navigation-controls">
+                    <label for="seder-select">סדר:</label>
+                <select id="seder-select">
+                    <option value="">בחר סדר...</option>
+                    <option value="1">זרעים</option>
+                    <option value="2">מועד</option>
+                    <option value="3">נשים</option>
+                    <option value="4">נזיקין</option>
+                    <option value="5">קדשים</option>
+                    <option value="6">טהרות</option>
+                </select>
+
+                <label for="masechet-select">מסכת:</label>
+                <select id="masechet-select" disabled>
+                    <option value="">בחר מסכת...</option>
+                </select>
+
+                <label for="perek-select">פרק:</label>
+                <select id="perek-select" disabled>
+                    <option value="">בחר פרק...</option>
+                </select>
+
+                <label for="mishnah-select">משנה:</label>
+                <select id="mishnah-select" disabled>
+                    <option value="">בחר משנה...</option>
+                </select>
+                </div>
+
+            <div id="perek-mishnayot-list" style="display: none;">
+                <!-- רשימת המשניות בפרק הנבחר תוצג כאן -->
+                </div>
+                </div>
+        
+        <div class="content-display-area section">
+            <h2>המשנה ופירושה:</h2>
+            <div class="options">
+                <label>
+                    <input type="checkbox" id="show-bartenura-checkbox" checked>
+                    הצג פירוש רע"ב (אם זמין)
+                </label>
+                <button id="add-to-print-button" class="action-button" style="display: none; margin-right: 15px;">
+                    הוסף לדף הלימוד להדפסה
+                </button>
+                </div>
+            <div id="mishnah-display" class="content-display">
+                (בחר משנה מהניווט למעלה כדי להציג כאן)
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        טקסטים נלקחו מה-API של <a href="https://www.sefaria.org" target="_blank" rel="noopener noreferrer">ספריה (Sefaria.org)</a> בכפוף לתנאי השימוש
+    </footer>
+
+    <script src="mishnah_mappings.js"></script>
+    <script src="mishnah_structure.js"></script>
+    <script src="mishnah_regular.js"></script>
+</body>
+</html>
