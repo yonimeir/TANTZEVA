@@ -46,17 +46,22 @@
 
         /* קנבס עבודה דמוי נייר A4 */
         .a4-canvas {
-            background: white;
+            background-color: white;
+            /* אינדיקציה חזותית לגבולות הדף (כל 297 מ"מ) רק במסך */
+            background-image: linear-gradient(to bottom, transparent calc(297mm - 2px), #b0bec5 calc(297mm - 2px), #b0bec5 297mm);
+            background-size: 100% 297mm;
+            
             width: 210mm;
             min-height: 297mm;
+            box-sizing: border-box;
             margin: 40px auto;
             padding: 20mm;
             box-shadow: 0 0 20px rgba(0,0,0,0.15);
-            font-family: 'David', 'Frank Ruhl Libre', serif; /* גופן קלאסי לספרי קודש */
+            font-family: 'David', 'Frank Ruhl Libre', serif;
             font-size: 16pt;
             line-height: 1.6;
             color: black;
-            outline: none; /* להעלים את הפוקוס השחור כשמקלידים */
+            outline: none;
             direction: rtl;
             text-align: justify;
         }
@@ -67,11 +72,24 @@
         .a4-canvas .mishnah-title { font-weight: bold; font-size: 18pt; margin-bottom: 10px; color: #000; text-decoration: underline; }
         .a4-canvas .bartenura-block { font-size: 13pt; color: #444; margin-top: 10px; padding-right: 15px; border-right: 3px solid #ccc; }
 
-        /* הגדרות הדפסה אמיתיות לדפדפן - מסתירות כל מה שהוא לא הנייר עצמו */
+        /* מאפשר הסתרה דינאמית של הברטנורא */
+        .a4-canvas.hide-bartenura .bartenura-block {
+            display: none !important;
+        }
+
+        /* במצב הדפסה */
         @media print {
             body { background: white; margin: 0; padding: 0; }
             .toolbar { display: none !important; }
-            .a4-canvas { margin: 0; padding: 0; box-shadow: none; border: none; width: 100%; min-height: auto; }
+            .a4-canvas { 
+                margin: 0; 
+                padding: 0; 
+                box-shadow: none; 
+                border: none; 
+                width: 100%; 
+                min-height: auto; 
+                background-image: none !important; /* ביטול הקו המפריד של הדפים בהדפסה האמיתית */
+            }
         }
 
         /* מצב טעינה */
@@ -109,15 +127,24 @@
         <button onclick="document.execCommand('justifyCenter', false, null)">יישור למרכז</button>
         <button onclick="document.execCommand('justifyLeft', false, null)">יישור לשמאל</button>
         <div class="sep"></div>
+        <button id="toggle-bart-btn" onclick="toggleBartenura()">📕 הסתר ברטנורא</button>
         <button class="primary-btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
     </div>
 
-    <!-- משטח העבודה נטו, ניתן לעריכת קוד/טקסט חי ללא כפתורים עליו -->
+    <!-- משטח העבודה נטו -->
     <div id="print-content" class="a4-canvas" contenteditable="true" spellcheck="false">
         <!-- התוכן יוזרק לפה באמצעות JavaScript -->
     </div>
 
     <script src="mishnah_mappings.js"></script>
     <script src="print.js"></script>
+    <script>
+        function toggleBartenura() {
+            const canvas = document.getElementById('print-content');
+            const btn = document.getElementById('toggle-bart-btn');
+            const isHidden = canvas.classList.toggle('hide-bartenura');
+            btn.innerHTML = isHidden ? '📖 הצג ברטנורא' : '📕 הסתר ברטנורא';
+        }
+    </script>
 </body>
 </html>
