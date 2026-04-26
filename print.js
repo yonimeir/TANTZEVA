@@ -1,140 +1,5 @@
-// מיפוי של שמות מסכתות להצגה
-const masechetIdToDisplayName = {
-    "1": "מסכת ברכות",
-    "2": "מסכת פאה",
-    "3": "מסכת דמאי",
-    "4": "מסכת כלאים",
-    "5": "מסכת שביעית",
-    "6": "מסכת תרומות",
-    "7": "מסכת מעשרות",
-    "8": "מסכת מעשר שני",
-    "9": "מסכת חלה",
-    "10": "מסכת ערלה",
-    "11": "מסכת ביכורים",
-    "12": "מסכת שבת",
-    "13": "מסכת עירובין",
-    "14": "מסכת פסחים",
-    "15": "מסכת שקלים",
-    "16": "מסכת יומא",
-    "17": "מסכת סוכה",
-    "18": "מסכת ביצה",
-    "19": "מסכת ראש השנה",
-    "20": "מסכת תענית",
-    "21": "מסכת מגילה",
-    "22": "מסכת מועד קטן",
-    "23": "מסכת חגיגה",
-    "24": "מסכת יבמות",
-    "25": "מסכת כתובות",
-    "26": "מסכת נדרים",
-    "27": "מסכת נזיר",
-    "28": "מסכת סוטה",
-    "29": "מסכת גיטין",
-    "30": "מסכת קידושין",
-    "31": "מסכת בבא קמא",
-    "32": "מסכת בבא מציעא",
-    "33": "מסכת בבא בתרא",
-    "34": "מסכת סנהדרין",
-    "35": "מסכת מכות",
-    "36": "מסכת שבועות",
-    "37": "מסכת עדיות",
-    "38": "מסכת עבודה זרה",
-    "39": "מסכת אבות",
-    "40": "מסכת הוריות",
-    "41": "מסכת זבחים",
-    "42": "מסכת מנחות",
-    "43": "מסכת חולין",
-    "44": "מסכת בכורות",
-    "45": "מסכת ערכין",
-    "46": "מסכת תמורה",
-    "47": "מסכת כריתות",
-    "48": "מסכת מעילה",
-    "49": "מסכת תמיד",
-    "50": "מסכת מידות",
-    "51": "מסכת קינים",
-    "52": "מסכת כלים",
-    "53": "מסכת אהלות",
-    "54": "מסכת נגעים",
-    "55": "מסכת פרה",
-    "56": "מסכת טהרות",
-    "57": "מסכת מקוואות",
-    "58": "מסכת נידה",
-    "59": "מסכת מכשירין",
-    "60": "מסכת זבים",
-    "61": "מסכת טבול יום",
-    "62": "מסכת ידיים",
-    "63": "מסכת עוקצין"
-};
-
-// מיפוי מסכתות לשם API עבור ספריא
-const masechetIdToApiName = {
-    "1": "Berakhot",
-    "2": "Peah",
-    "3": "Demai",
-    "4": "Kilayim",
-    "5": "Sheviit",
-    "6": "Terumot",
-    "7": "Maasrot",
-    "8": "Maaser_Sheni",
-    "9": "Challah",
-    "10": "Orlah",
-    "11": "Bikkurim",
-    "12": "Shabbat",
-    "13": "Eruvin",
-    "14": "Pesachim",
-    "15": "Shekalim",
-    "16": "Yoma",
-    "17": "Sukkah",
-    "18": "Beitzah",
-    "19": "Rosh_Hashanah",
-    "20": "Taanit",
-    "21": "Megillah",
-    "22": "Moed_Katan",
-    "23": "Chagigah",
-    "24": "Yevamot",
-    "25": "Ketubot",
-    "26": "Nedarim",
-    "27": "Nazir",
-    "28": "Sotah",
-    "29": "Gittin",
-    "30": "Kiddushin",
-    "31": "Bava_Kamma",
-    "32": "Bava_Metzia",
-    "33": "Bava_Batra",
-    "34": "Sanhedrin",
-    "35": "Makkot",
-    "36": "Shevuot",
-    "37": "Eduyot",
-    "38": "Avodah_Zarah",
-    "39": "Avot",
-    "40": "Horayot",
-    "41": "Zevachim",
-    "42": "Menachot",
-    "43": "Chullin",
-    "44": "Bekhorot",
-    "45": "Arakhin",
-    "46": "Temurah",
-    "47": "Keritot",
-    "48": "Meilah",
-    "49": "Tamid",
-    "50": "Middot",
-    "51": "Kinnim",
-    "52": "Kelim",
-    "53": "Oholot",
-    "54": "Negaim",
-    "55": "Parah",
-    "56": "Tahorot",
-    "57": "Mikvaot",
-    "58": "Niddah",
-    "59": "Makhshirin",
-    "60": "Zavim",
-    "61": "Tevul_Yom",
-    "62": "Yadayim",
-    "63": "Oktzin"
-};
-
-// הוספת מיפוי גלובלי
-window.masechetIdToDisplayName = masechetIdToDisplayName;
-window.masechetIdToApiName = masechetIdToApiName;
+// Removed duplicate masechetIdToDisplayName and masechetIdToApiName declarations
+// They are sourced directly from mishnah_mappings.js
 
 // שלד JS לדף הדפסה
 // כאן תוכל להעתיק פונקציות קיימות מהקוד הישן (app.js) להצגת המשניות שנבחרו.
@@ -405,10 +270,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (formatA4) formatA4.checked = true;
     updatePrintFormat();
     
-    // אירוע סגירת תצוגה מקדימה
+    // אירוע לחזרה לעמוד הראשי
     if (closePreviewButton) {
         closePreviewButton.addEventListener('click', function() {
-            if (printPreview) printPreview.style.display = 'none';
+            window.location.href = 'index.html';
         });
     }
     
@@ -854,7 +719,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 printContent.innerHTML = '<div class="error-message" style="color: red; text-align: center; padding: 20px;">אירעה שגיאה בטעינת המשניות. אנא נסה שוב מאוחר יותר.</div>';
             }
         });
-    }
+    // הפעל אוטומטית בעליית העמוד
+    setTimeout(() => {
+        if (generatePreviewButton) {
+            generatePreviewButton.click();
+        }
+    }, 100);
 });
 
 // פונקציה להמרת מספרים לאותיות עבריות
