@@ -477,6 +477,8 @@ document.addEventListener('DOMContentLoaded', function() {
             modalPreviewTitle.textContent = 'בחרו משנה מהרשימה';
             modalPreviewText.innerHTML = '';
             modalPreviewCommentary.innerHTML = '';
+            if (modalPreview) modalPreview.style.display = 'block';
+            if (modalPreviewContent) modalPreviewContent.style.display = 'block';
             currentSelectedMishnahInModal = null;
             if (modalConfirmButton) modalConfirmButton.disabled = true;
 
@@ -782,6 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function closeModalFunc() {
             if(modal) modal.style.display = 'none';
             currentSelectedMishnahInModal = null;
+            if (modalPreview) modalPreview.style.display = 'none';
             if (modalPreviewContent) modalPreviewContent.style.display = 'none';
             if (modalPreviewTitle) modalPreviewTitle.textContent = 'בחרו משנה מהרשימה';
             if (modalPreviewText) modalPreviewText.innerHTML = '';
@@ -971,6 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function fetchAndDisplayMishnahInModal(masechetId, perekNum, mishnahNum) {
+             if (modalPreview) modalPreview.style.display = 'block';
              modalPreviewContent.style.display = 'block';
              modalPreviewTitle.textContent = 'טוען...';
              modalPreviewText.innerHTML = '<div class="spinner-container" style="padding: 20px;"><div class="spinner"></div></div>';
