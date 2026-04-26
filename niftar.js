@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const copySelectedButton = document.getElementById('copy-selected');
         const clearSelectionButton = document.getElementById('clear-selections-button');
         const letterBoxesContainer = document.getElementById('letter-boxes');
-        const mishnayotDisplay = document.getElementById('mishnayot-display');
+        // Add fallback to old ID for browsers with cached index.html
+        const mishnayotDisplay = document.getElementById('mishnayot-display') || document.getElementById('mishnah-display');
         const selectedMishnayotList = document.getElementById('selected-mishnayot-list');
         const errorMessage = document.getElementById('error-message'); // חשוב להגדיר לפני showError
         const modal = document.getElementById('mishnah-modal');
@@ -568,8 +569,8 @@ document.addEventListener('DOMContentLoaded', function() {
             saveMishnayotToLocalStorage();
             renderLetterBoxes();
             renderSelectedMishnayotList();
-            closeModalFunc();
             const { masechetId, perekNum, mishnahNum } = currentSelectedMishnahInModal;
+            closeModalFunc();
             fetchAndDisplayMishnah(masechetId, perekNum, mishnahNum);
             contentDisplayArea.style.display = 'block';
         }
@@ -611,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function addNeshamahMishnayot() {
             const neshamahLetters = ['נ', 'ש', 'מ', 'ה'];
-            const masechetIdNeshamah = "57"; // מקוואות
+            const masechetIdNeshamah = 57; // מקוואות (needs to be integer for strict comparison)
             const perekNumNeshamah = 7;
             const startMishnahNumNeshamah = 4;
 
@@ -685,8 +686,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showError('לא נבחרו משניות להדפסה');
                 return;
             }
-            // Data is already in localStorage, print.html will read it
-            window.location.href = 'print.html';
+            window.print();
         }
 
         function renderSelectedMishnayotList() {
