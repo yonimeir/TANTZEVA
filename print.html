@@ -3,298 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הדפסת משניות ותהילים לעילוי נשמת</title>
-    <link rel="stylesheet" href="print.css">
-    <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&display=swap" rel="stylesheet">
+    <title>עורך הדפסה - משניות לעילוי נשמת</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                margin: 0;
-                padding: 0;
-                background: white;
-            }
-            .print-area {
-                margin: 0;
-                padding: 20px;
-                width: 100%;
-                box-shadow: none;
-            }
-            .main-nav, .main-container > h1, footer {
-                display: none;
-            }
-            .page-break {
-                page-break-before: always;
-            }
-        }
+        /* איפוס בסיסי לעמוד ההדפסה בלבד */
+        body { margin: 0; padding: 0; background-color: #f4f6f9; font-family: 'Assistant', Arial, sans-serif; }
         
-        .print-controls {
-            margin: 20px 0;
+        /* סרגל כלים - מוצג רק למסך */
+        .toolbar {
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 15px 20px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
             justify-content: center;
-        }
-        
-        .print-option {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            background-color: #e8eaf6;
-            border: 1px solid #c5cae9;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .print-option.selected {
-            background-color: #3f51b5;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .print-preview {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .print-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3f51b5;
-        }
-        
-        .print-footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-            font-size: 0.9em;
-            color: #666;
-        }
-        
-        .mishnah-item, .tehillim-item {
-            margin-bottom: 15px;
-            padding: 5px 0;
-            background-color: transparent;
-            border: none;
-        }
-        
-        .mishnah-title, .tehillim-title {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-            color: #000;
-        }
-        
-        .mishnah-content, .tehillim-content {
-            line-height: 1.6;
-            font-size: 1em;
-        }
-        
-        .print-layout-options {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f5f5f5;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        .letter-section {
-            margin: 15px 0;
-            padding: 10px 0;
-            border: none;
-            background-color: transparent;
+        .toolbar button {
+            background: whitesmoke;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s all;
         }
+
+        .toolbar button:hover { background: #e0e0e0; }
         
-        .letter-heading {
-            font-size: 18px;
-            font-weight: bold;
-            color: #000;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #ccc;
-        }
+        .toolbar .primary-btn { background: #3f51b5; color: white; border-color: #3f51b5; font-weight: bold; }
+        .toolbar .primary-btn:hover { background: #303f9f; }
         
-        .tehillim-verse {
-            margin-bottom: 8px;
+        .toolbar .back-btn { background: #f44336; color: white; border-color: #f44336; }
+        .toolbar .back-btn:hover { background: #d32f2f; }
+
+        .toolbar .sep { height: 30px; width: 1px; background: #ccc; }
+
+        /* קנבס עבודה דמוי נייר A4 */
+        .a4-canvas {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            margin: 40px auto;
+            padding: 20mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            font-family: 'David', 'Frank Ruhl Libre', serif; /* גופן קלאסי לספרי קודש */
+            font-size: 16pt;
             line-height: 1.6;
+            color: black;
+            outline: none; /* להעלים את הפוקוס השחור כשמקלידים */
+            direction: rtl;
+            text-align: justify;
         }
-        
-        .preview-container {
-            padding: 20px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        
-        .print-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .print-option {
-            margin-bottom: 10px;
-        }
-        
-        .selected-content-display {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .selected-content-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .selected-content-item {
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .selected-content-letter {
-            font-weight: bold;
-            margin-top: 10px;
-            border-top: 1px solid #ccc;
-            padding-top: 5px;
-        }
-        
-        .letter-heading {
-            font-weight: bold;
-            margin-top: 10px;
-            padding: 5px;
-            background-color: #f0f0f0;
-            border-radius: 4px;
-        }
-        
+
+        .a4-canvas h1 { text-align: center; margin-bottom: 5px; font-size: 26pt; }
+        .a4-canvas h2 { text-align: center; font-size: 18pt; margin-bottom: 30px; font-weight: normal; }
+        .a4-canvas .mishnah-block { margin-bottom: 25px; }
+        .a4-canvas .mishnah-title { font-weight: bold; font-size: 18pt; margin-bottom: 10px; color: #000; text-decoration: underline; }
+        .a4-canvas .bartenura-block { font-size: 13pt; color: #444; margin-top: 10px; padding-right: 15px; border-right: 3px solid #ccc; }
+
+        /* הגדרות הדפסה אמיתיות לדפדפן - מסתירות כל מה שהוא לא הנייר עצמו */
         @media print {
-            .no-print {
-                display: none !important;
-            }
-            
-            .page-break {
-                page-break-before: always;
-            }
-            
-            body {
-                font-size: 12pt;
-                font-family: 'David', 'Times New Roman', serif;
-            }
-            
-            .letter-heading {
-                background-color: transparent;
-                border-bottom: 1px solid #000;
-            }
+            body { background: white; margin: 0; padding: 0; }
+            .toolbar { display: none !important; }
+            .a4-canvas { margin: 0; padding: 0; box-shadow: none; border: none; width: 100%; min-height: auto; }
         }
+
+        /* מצב טעינה */
+        .loading-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 2000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 24px; color: #333; font-weight: bold;
+        }
+        .spinner {
+            border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px;
+            border-radius: 50%; border-left-color: #3f51b5; animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="no-print">
-            <h1>הדפסת דף לימוד לעילוי נשמת <span id="niftar-name-display"></span></h1>
-            <p>בעמוד זה תוכל להדפיס את המשניות ופרקי התהילים שבחרת</p>
-    </header>
-        
-        <div class="preview-container no-print" style="display: none;">
-            <h2>תצוגה מקדימה והגדרות הדפסה</h2>
-            
-            <div class="print-options">
-                <div class="print-option">
-                    <h3>פורמט הדפסה</h3>
-                    <label>
-                        <input type="radio" name="print-format" id="format-a4" checked> דף A4
-                    </label><br>
-                    <label>
-                        <input type="radio" name="print-format" id="format-booklet"> חוברת
-                    </label>
-                </div>
-                
-                <div class="print-option">
-                    <h3>תוכן</h3>
-                    <label>
-                        <input type="checkbox" id="include-commentary" checked> כלול פירוש ברטנורא
-                    </label><br>
-                    <label>
-                        <input type="checkbox" id="include-neshamah-note" checked> כלול כותרת "לעילוי נשמת"
-                    </label>
-                </div>
-                
-                <div class="print-option">
-                    <h3>אותיות ללימוד</h3>
-                    <label>
-                        <input type="checkbox" id="use-custom-letters"> השתמש באותיות מותאמות אישית
-                    </label><br>
-                    <input type="text" id="custom-letters-input" class="form-control" placeholder="לדוגמה: א, ב, ה, י, מ, נ, ר, ש" style="width: 300px; margin-top: 5px;">
-                    <p class="help-text" style="font-size: 0.9em; color: #555;">הזן את האותיות בסדר שתרצה, מופרדות בפסיקים</p>
-                </div>
-                
-                <div class="print-option">
-                    <h3>פעולות</h3>
-                    <button id="generate-preview" class="btn">הכן תצוגה מקדימה</button>
-                    <button id="print-button" class="btn">הדפס</button>
-                </div>
-            </div>
-            
-            <div id="error-message" class="error-message" style="display: none;"></div>
-            
-            <!-- חלון תצוגה למשניות שנבחרו -->
-            <div class="selected-content-display">
-                <h3>המשניות שנבחרו:</h3>
-                <div id="selected-mishnayot-display"></div>
-            </div>
-            
-            <!-- חלון תצוגה לפרקי התהילים שנבחרו -->
-            <div class="selected-content-display">
-                <h3>פרקי התהילים שנבחרו:</h3>
-                <div id="selected-tehillim-display"></div>
-            </div>
-        </div>
-        
-        <div id="print-preview" style="display: block;">
-            <div class="print-header no-print">
-                <h2>עורך הדפסה</h2>
-                <div class="editor-toolbar" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; background: #e8eaf6; padding: 10px; border-radius: 5px; border: 1px solid #c5cae9;">
-                    <button type="button" onclick="document.execCommand('bold', false, null)" class="btn" style="padding: 5px 10px;"><b>מודגש</b></button>
-                    <button type="button" onclick="document.execCommand('italic', false, null)" class="btn" style="padding: 5px 10px;"><i>נטוי</i></button>
-                    <button type="button" onclick="document.execCommand('underline', false, null)" class="btn" style="padding: 5px 10px;"><u>קו תחתון</u></button>
-                    <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
-                    <button type="button" onclick="document.execCommand('justifyRight', false, null)" class="btn" style="padding: 5px 10px;">ימין</button>
-                    <button type="button" onclick="document.execCommand('justifyCenter', false, null)" class="btn" style="padding: 5px 10px;">מרכז</button>
-                    <button type="button" onclick="document.execCommand('justifyLeft', false, null)" class="btn" style="padding: 5px 10px;">שמאל</button>
-                    <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
-                    <button type="button" onclick="document.execCommand('fontSize', false, '5')" class="btn" style="padding: 5px 10px;">גדול</button>
-                    <button type="button" onclick="document.execCommand('fontSize', false, '3')" class="btn" style="padding: 5px 10px;">רגיל</button>
-                    <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
-                    <button type="button" onclick="window.print()" class="btn" style="background-color: #4CAF50; color: white;">🖨️ הדפס מתוך העורך</button>
-                    <button type="button" id="close-preview" class="btn" style="background-color: #f44336; color: white;">חזור</button>
-                </div>
-            </div>
-            
-            <div id="print-content" contenteditable="true" style="background: white; min-height: 297mm; max-width: 210mm; margin: 20px auto; padding: 20mm; box-shadow: 0 0 15px rgba(0,0,0,0.15); border: 1px solid #ddd; outline: none; text-align: right; direction: rtl;"></div>
-        </div>
-        
-        <footer class="no-print">
-            <p>© כל הזכויות שמורות - משניות לעילוי נשמת</p>
-            <a href="index.html">חזרה לעמוד הראשי</a>
-        </footer>
+
+    <!-- שכבת טעינה -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <span>...מכין משניות להדפסה</span>
     </div>
-    
+
+    <!-- סרגל כלים שיוצג רק על המסך -->
+    <div class="toolbar no-print">
+        <button class="back-btn" onclick="window.history.back()">↩ חזור לבחירה</button>
+        <div class="sep"></div>
+        <button onclick="document.execCommand('bold', false, null)"><b>B</b> מודגש</button>
+        <button onclick="document.execCommand('italic', false, null)"><i>I</i> נטוי</button>
+        <button onclick="document.execCommand('underline', false, null)"><u>U</u> קו תחתון</button>
+        <div class="sep"></div>
+        <button onclick="document.execCommand('justifyRight', false, null)">יישור לימין</button>
+        <button onclick="document.execCommand('justifyCenter', false, null)">יישור למרכז</button>
+        <button onclick="document.execCommand('justifyLeft', false, null)">יישור לשמאל</button>
+        <div class="sep"></div>
+        <button class="primary-btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
+    </div>
+
+    <!-- משטח העבודה נטו, ניתן לעריכת קוד/טקסט חי ללא כפתורים עליו -->
+    <div id="print-content" class="a4-canvas" contenteditable="true" spellcheck="false">
+        <!-- התוכן יוזרק לפה באמצעות JavaScript -->
+    </div>
+
     <script src="mishnah_mappings.js"></script>
-    <script src="mishnah_structure.js"></script>
     <script src="print.js"></script>
 </body>
 </html>
