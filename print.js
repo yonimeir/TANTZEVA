@@ -42,8 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     || ('מסכת ' + mishnah.masechetId);
 
             // קריאות ל-API של ספריא (טקסט משנה + פירוש ברטנורא)
-            const textUrl = `https://www.sefaria.org/api/texts/Mishnah_${apiName}.${perekNum}.${mishnahNum}?context=0`;
-            const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${apiName}.${perekNum}.${mishnahNum}?context=0`;
+            const formattedApiName = apiName.replace(/ /g, '_');
+            const textUrl = `https://www.sefaria.org/api/texts/${formattedApiName}.${perekNum}.${mishnahNum}?context=0`;
+            const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_${formattedApiName}.${perekNum}.${mishnahNum}?context=0`;
 
             const [textRes, bartRes] = await Promise.all([
                 fetch(textUrl).catch(e => null),
