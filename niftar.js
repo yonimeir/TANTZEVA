@@ -686,7 +686,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showError('לא נבחרו משניות להדפסה');
                 return;
             }
-            window.print();
+            window.location.href = 'print.html';
         }
 
         function renderSelectedMishnayotList() {

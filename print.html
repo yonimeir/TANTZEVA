@@ -82,20 +82,21 @@
         
         .mishnah-item, .tehillim-item {
             margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 5px;
+            padding: 5px 0;
+            background-color: transparent;
+            border: none;
         }
         
         .mishnah-title, .tehillim-title {
             font-weight: bold;
+            font-size: 1.1em;
             margin-bottom: 5px;
-            color: #3f51b5;
+            color: #000;
         }
         
         .mishnah-content, .tehillim-content {
             line-height: 1.6;
+            font-size: 1em;
         }
         
         .print-layout-options {
@@ -108,18 +109,18 @@
 
         .letter-section {
             margin: 15px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+            padding: 10px 0;
+            border: none;
+            background-color: transparent;
         }
         
         .letter-heading {
             font-size: 18px;
-            color: #3f51b5;
+            font-weight: bold;
+            color: #000;
             margin-bottom: 10px;
             padding-bottom: 5px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #ccc;
         }
         
         .tehillim-verse {
@@ -265,11 +266,26 @@
         
         <div id="print-preview" style="display: none;">
             <div class="print-header no-print">
-                <h2>תצוגה מקדימה</h2>
-                <button id="close-preview" class="btn">סגור</button>
+                <h2>עורך הדפסה</h2>
+                <div style="margin-bottom: 15px; color: #555;">תוכל לערוך את הטקסט, לשנות גודל או למחוק שורות ממש כמו בוורד!</div>
+                <div class="editor-toolbar" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; background: #e8eaf6; padding: 10px; border-radius: 5px; border: 1px solid #c5cae9;">
+                    <button type="button" onclick="document.execCommand('bold', false, null)" class="btn" style="padding: 5px 10px;"><b>מודגש</b></button>
+                    <button type="button" onclick="document.execCommand('italic', false, null)" class="btn" style="padding: 5px 10px;"><i>נטוי</i></button>
+                    <button type="button" onclick="document.execCommand('underline', false, null)" class="btn" style="padding: 5px 10px;"><u>קו תחתון</u></button>
+                    <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
+                    <button type="button" onclick="document.execCommand('justifyRight', false, null)" class="btn" style="padding: 5px 10px;">ימין</button>
+                    <button type="button" onclick="document.execCommand('justifyCenter', false, null)" class="btn" style="padding: 5px 10px;">מרכז</button>
+                    <button type="button" onclick="document.execCommand('justifyLeft', false, null)" class="btn" style="padding: 5px 10px;">שמאל</button>
+                    <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
+                    <button type="button" onclick="document.execCommand('fontSize', false, '5')" class="btn" style="padding: 5px 10px;">גדול</button>
+                    <button type="button" onclick="document.execCommand('fontSize', false, '3')" class="btn" style="padding: 5px 10px;">רגיל</button>
+                    <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
+                    <button type="button" onclick="window.print()" class="btn" style="background-color: #4CAF50; color: white;">🖨️ הדפס מתוך העורך</button>
+                    <button type="button" id="close-preview" class="btn" style="background-color: #f44336; color: white;">חזור</button>
+                </div>
             </div>
             
-            <div id="print-content"></div>
+            <div id="print-content" contenteditable="true" style="background: white; min-height: 297mm; max-width: 210mm; margin: 20px auto; padding: 20mm; box-shadow: 0 0 15px rgba(0,0,0,0.15); border: 1px solid #ddd; outline: none; text-align: right; direction: rtl;"></div>
         </div>
         
         <footer class="no-print">
