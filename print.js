@@ -523,8 +523,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         // עבור כל אות בסדר שהוגדר
                         for (let i = 0; i < letters.length; i++) {
                             const letter = letters[i];
-                            // מציאת משניות שמתאימות לאות זו
-                            const letterMishnayot = selectedMishnayot.filter(m => m.letter === letter);
+                            // מציאת משניות שמתאימות לאות זו (תמיכה גם בגרסה ישנה של m.letter)
+                            const letterMishnayot = selectedMishnayot.filter(m => m.letterIndex === i || m.letter === letter);
                             
                             console.log(`אות ${letter}: נמצאו ${letterMishnayot.length} משניות`);
                             
@@ -639,7 +639,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         for (let i = 0; i < letters.length; i++) {
                             const letter = letters[i];
                             // מציאת פסוקים שמתאימים לאות זו
-                            const letterVerses = selectedTehillimVerses.filter(v => v.letter === letter);
+                            const letterVerses = selectedTehillimVerses.filter(v => v.letterIndex === i || v.letter === letter);
                             
                             console.log(`אות ${letter}: נמצאו ${letterVerses.length} פסוקי תהילים`);
                             
