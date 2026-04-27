@@ -861,10 +861,11 @@ window.runNiftarApp = function(passedIndexData) {
                 }
             }
 
-            // Fetch from Sefaria API
-            const masechetApiName = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
-             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
-             const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
+            // Fetch from Sefaria API (אבות: ספריא — Mishnah_Avot לא Mishnah_Pirkei_Avot)
+            let apiSlug = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
+            if (apiSlug === 'Pirkei_Avot') apiSlug = 'Avot';
+             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${apiSlug}.${perekNum}.${mishnahNum}?context=0`;
+             const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${apiSlug}.${perekNum}.${mishnahNum}?context=0`;
 
             console.log("Fetching from Sefaria API:", mishnahUrl);
             fetch(mishnahUrl)
@@ -993,8 +994,9 @@ window.runNiftarApp = function(passedIndexData) {
                  }
              }
 
-            const masechetApiName = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
-             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
+            let apiSlugModal = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
+            if (apiSlugModal === 'Pirkei_Avot') apiSlugModal = 'Avot';
+             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${apiSlugModal}.${perekNum}.${mishnahNum}?context=0`;
              console.log("Fetching for modal:", mishnahUrl);
              fetch(mishnahUrl)
                  .then(response => {

@@ -11,8 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const tehillimTabs = document.getElementById('tehillim-tabs');
     const tehillim119Content = document.getElementById('tehillim119-content');
     const selectedChapterContent = document.getElementById('selected-chapter-content');
-    const printSection = document.getElementById('print-section');
-    const preparePrintButton = document.getElementById('prepare-print-button');
     const errorMessage = document.getElementById('error-message');
     
     // קיבוע אלמנטים שאולי לא קיימים בדף
@@ -105,8 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // הצגת תהילים קי"ט לפי האותיות
         renderTehillim119ByLetters();
         
-        // הצגת סקשן ההדפסה
-        printSection.style.display = 'block';
     }
 
     // יצירת תגיות לאותיות
@@ -355,14 +351,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    // הכנה להדפסה - מעבר לדף ההדפסה
-    function preparePrint() {
-        window.location.href = 'print.html';
-    }
-
     // אירועים
     processNameButton.addEventListener('click', processNameAndShow);
-    preparePrintButton.addEventListener('click', preparePrint);
     
     // אירועי לשוניות
     const tabs = tehillimTabs.querySelectorAll('.tehillim-tab');

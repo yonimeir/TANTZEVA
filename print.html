@@ -50,6 +50,35 @@
 
         .toolbar .sep { height: 30px; width: 1px; background: #ccc; }
 
+        .toolbar-secondary {
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            border-top: 1px dashed #cfd8dc;
+        }
+        .toolbar-caption {
+            font-size: 13px;
+            color: #546e7a;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .toolbar-secondary button {
+            background: #eceff1 !important;
+            border: 1px solid #b0bec5 !important;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #263238 !important;
+        }
+        .toolbar-secondary button:hover {
+            background: #cfd8dc !important;
+            border-color: #78909c !important;
+        }
+
         /* קנבס עבודה דמוי נייר A4 */
         .a4-canvas {
             background-color: white;
@@ -77,6 +106,9 @@
         .a4-canvas .mishnah-block { margin-bottom: 25px; }
         .a4-canvas .mishnah-title { font-weight: bold; font-size: 18pt; margin-bottom: 10px; color: #000; text-decoration: underline; }
         .a4-canvas .bartenura-block { font-size: 13pt; color: #444; margin-top: 10px; padding-right: 15px; border-right: 3px solid #ccc; }
+        .a4-canvas .print-extra-title { font-size: 16pt; color: #000; margin-top: 1em; text-align: center; font-weight: bold; }
+        .a4-canvas .print-extra-body { font-size: 13pt; color: #222; text-align: justify; }
+        .a4-canvas .verse-num { font-weight: bold; color: #37474f; margin-left: 0.25em; }
 
         /* מאפשר הסתרה דינאמית של הברטנורא */
         .a4-canvas.hide-bartenura .bartenura-block {
@@ -137,12 +169,22 @@
         <button class="primary-btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
     </div>
 
+    <div class="toolbar toolbar-secondary no-print">
+        <span class="toolbar-caption">תוספות להדפסה (מתווספות לדף בלבד)</span>
+        <button type="button" onclick="window.printExtrasToggleBartenura && window.printExtrasToggleBartenura()">ברטנורא</button>
+        <button type="button" onclick="window.printAppendTehillimCemetery && window.printAppendTehillimCemetery()">תהילים על הקבר</button>
+        <button type="button" onclick="window.printAppendKit119ByName && window.printAppendKit119ByName()">קיט לפי שם הנפטר</button>
+        <button type="button" onclick="window.printAppendKit119Full && window.printAppendKit119Full()">קיט מלא</button>
+        <button type="button" onclick="window.printAppendElMalehYizkor && window.printAppendElMalehYizkor()">אל מלא רחמים ויזכור</button>
+    </div>
+
     <!-- משטח העבודה נטו -->
     <div id="print-content" class="a4-canvas" contenteditable="true" spellcheck="false">
         <!-- התוכן יוזרק לפה באמצעות JavaScript -->
     </div>
 
     <script src="mishnah_mappings.js"></script>
+    <script src="tehillim119_data.js"></script>
     <script src="print.js"></script>
     <script>
         function toggleBartenura() {

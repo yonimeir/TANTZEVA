@@ -222,3 +222,5 @@ const tehillim119 = {
     "תָּעִ֗יתִי כְּשֶׂ֣ה אֹ֭בֵד בַּקֵּ֣שׁ עַבְדֶּ֑ךָ כִּ֥י מִ֝צְוֺתֶ֗יךָ לֹ֣א שָׁכָֽחְתִּי׃&nbsp;<span class=\"mam-spi-pe\">{פ}</span><br>"
   ]
 };
+
+window.tehillim119 = tehillim119;
