@@ -24,23 +24,29 @@
             border-bottom: 2px solid #e0e0e0;
         }
 
-        .toolbar button {
-            background: whitesmoke;
-            border: 1px solid #ccc;
+        /* מעקף את style.css הגלובלי (button { color: white }) — רק על כפתורי העיצוב הבהירים */
+        .toolbar button:not(.primary-btn):not(.back-btn) {
+            background: whitesmoke !important;
+            border: 1px solid #ccc !important;
             border-radius: 5px;
             padding: 8px 15px;
             cursor: pointer;
             font-size: 14px;
             transition: 0.2s all;
+            color: #1a237e !important;
         }
 
-        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar button:not(.primary-btn):not(.back-btn):hover {
+            background: #e8eaf6 !important;
+            border-color: #9fa8da !important;
+            color: #0d1642 !important;
+        }
         
-        .toolbar .primary-btn { background: #3f51b5; color: white; border-color: #3f51b5; font-weight: bold; }
-        .toolbar .primary-btn:hover { background: #303f9f; }
+        .toolbar .primary-btn { background: #3f51b5 !important; color: #fff !important; border-color: #3f51b5 !important; font-weight: bold; }
+        .toolbar .primary-btn:hover { background: #303f9f !important; }
         
-        .toolbar .back-btn { background: #f44336; color: white; border-color: #f44336; }
-        .toolbar .back-btn:hover { background: #d32f2f; }
+        .toolbar .back-btn { background: #f44336 !important; color: #fff !important; border-color: #f44336 !important; }
+        .toolbar .back-btn:hover { background: #d32f2f !important; }
 
         .toolbar .sep { height: 30px; width: 1px; background: #ccc; }
 

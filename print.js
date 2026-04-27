@@ -31,42 +31,66 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // מעבר על כל המשניות ושאיבתן מ-API ספריא
         for (const mishnah of selectedMishnayot) {
-            const apiName = window.masechetIdToApiName ? window.masechetIdToApiName[mishnah.masechetId] : '';
+            const mid = mishnah.masechetId != null ? String(mishnah.masechetId) : '';
+            const apiName = window.masechetIdToApiName ? window.masechetIdToApiName[mid] : '';
             if (!apiName) continue;
 
             const perekNum = mishnah.perekNum || mishnah.perek || 1;
             const mishnahNum = mishnah.mishnahNum || mishnah.mishnah || 1;
             
             // תרגום לשם המסכת קריא
-            const masechetDisplay = (window.masechetIdToDisplayName && window.masechetIdToDisplayName[mishnah.masechetId]) 
-                                    || ('מסכת ' + mishnah.masechetId);
+            const masechetDisplay = (window.masechetIdToDisplayName && window.masechetIdToDisplayName[mid]) 
+                                    || ('מסכת ' + mid);
 
-            // קריאות ל-API של ספריא (טקסט משנה + פירוש ברטנורא)
-            const formattedApiName = apiName.replace(/ /g, '_');
-            const textUrl = `https://www.sefaria.org/api/texts/Mishnah_${formattedApiName}.${perekNum}.${mishnahNum}?context=0`;
-            const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${formattedApiName}.${perekNum}.${mishnahNum}?context=0`;
-
-            const [textRes, bartRes] = await Promise.all([
-                fetch(textUrl).catch(e => null),
-                fetch(bartenuraUrl).catch(e => null)
-            ]);
-
-            let mishnahText = 'לא ניתן היה לטעון את תוכן המשנה.';
-            let bartenuraText = '';
-
-            // חלץ טקסט משנה
-            if (textRes && textRes.ok) {
-                const textData = await textRes.json();
-                if (textData && textData.he) {
-                    mishnahText = Array.isArray(textData.he) ? textData.he.join('<br>') : textData.he;
-                }
+            // במיפוי יש לעיתים "Mishnah Berakhot" — לא להוסיף שוב קידומת Mishnah_
+            let bookSlug = apiName.replace(/ /g, '_');
+            if (bookSlug.startsWith('Mishnah_')) {
+                bookSlug = bookSlug.slice('Mishnah_'.length);
             }
 
-            // חלץ טקסט ברטנורא במקרה שיש
-            if (bartRes && bartRes.ok) {
-                const bartData = await bartRes.json();
-                if (bartData && bartData.he) {
-                    bartenuraText = Array.isArray(bartData.he) ? bartData.he.join('<br>') : bartData.he;
+            const textUrl = `https://www.sefaria.org/api/texts/Mishnah_${bookSlug}.${perekNum}.${mishnahNum}?context=0`;
+            const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${bookSlug}.${perekNum}.${mishnahNum}?context=0`;
+
+            const cacheKey = `mishnah_${mid}_${perekNum}_${mishnahNum}`;
+            let mishnahText = '';
+            let bartenuraText = '';
+            try {
+                const cached = localStorage.getItem(cacheKey);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed.text) mishnahText = parsed.text;
+                    if (parsed.commentary) bartenuraText = parsed.commentary;
+                }
+            } catch (e) { /* ignore */ }
+
+            if (!mishnahText) {
+                const [textRes, bartRes] = await Promise.all([
+                    fetch(textUrl).catch(() => null),
+                    fetch(bartenuraUrl).catch(() => null)
+                ]);
+
+                mishnahText = 'לא ניתן היה לטעון את תוכן המשנה.';
+
+                if (textRes && textRes.ok) {
+                    const textData = await textRes.json();
+                    if (textData && textData.he) {
+                        mishnahText = Array.isArray(textData.he) ? textData.he.join('<br>') : textData.he;
+                    }
+                }
+
+                if (bartRes && bartRes.ok) {
+                    const bartData = await bartRes.json();
+                    if (bartData && bartData.he) {
+                        bartenuraText = Array.isArray(bartData.he) ? bartData.he.join('<br>') : bartData.he;
+                    }
+                }
+            } else if (!bartenuraText) {
+                const bartRes = await fetch(bartenuraUrl).catch(() => null);
+                if (bartRes && bartRes.ok) {
+                    const bartData = await bartRes.json();
+                    if (bartData && bartData.he) {
+                        bartenuraText = Array.isArray(bartData.he) ? bartData.he.join('<br>') : bartData.he;
+                    }
                 }
             }
 
