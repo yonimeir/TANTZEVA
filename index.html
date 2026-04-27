@@ -5,20 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>לעילוי נשמת - משניות</title>
     <link rel="stylesheet" href="style.css">
-    <script src="mishnah_index.js"></script>
-    <script src="mishnah_mappings.js"></script>
-    <script src="niftar.js"></script>
-    <script>
-        // Init the app synchronously so the inner DOMContentLoaded listener in niftar.js registers in time
-        if (window.runNiftarApp) {
-            window.runNiftarApp(typeof mishnahIndex !== 'undefined' ? mishnahIndex : null);
-        }
-    </script>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>משניות לעילוי נשמת</h1>
+            <nav class="main-nav">
+                <a href="index.html" class="active">משניות לע"נ</a>
+                <a href="tehillim.html">תהילים קי"ט</a>
+                <a href="print.html">הדפסה</a>
+            </nav>
         </header>
         
         <div class="main-content">
@@ -45,21 +41,21 @@
                         <button id="add-neshamah-button">הוסף משניות נשמ"ה</button>
                         <button id="clear-selections-button">נקה בחירות</button>
                         <button id="prepare-print-button">הכן להדפסה</button>
+                        <button id="goto-tehillim-button" onclick="window.location.href='tehillim.html'">תהילים קי"ט לפי השם</button>
+                        <button id="share-selection-button">שתף בחירה</button>
+                        <button id="copy-selected">העתק רשימה</button>
                 </div>
                 </div>
             </div>
             
             <!-- תצוגה של משנה שנבחרה -->
             <div class="mishnah-preview" style="display: none;">
-                <div id="mishnayot-display" class="mishnah-content"></div>
+                <div id="mishnah-display" class="mishnah-content"></div>
             </div>
             
             <!-- רשימת משניות שנבחרו -->
             <div class="selected-mishnayot-section">
-                <div class="section-header-row">
-                    <h3>משניות שנבחרו</h3>
-                    <button id="copy-selected" class="action-button copy-button" style="display: none;">העתק הכל לצילום קליפבורד</button>
-                </div>
+                <h3>משניות שנבחרו</h3>
                 <div id="selected-mishnayot-list" class="selected-mishnayot-list"></div>
             </div>
         </div>
@@ -74,7 +70,6 @@
                     <div id="modal-preview-content">
                         <h4 id="modal-preview-title"></h4>
                         <div id="modal-preview-text"></div>
-                        <div id="modal-preview-commentary"></div>
                     </div>
                 </div>
                 
@@ -86,7 +81,7 @@
                         <span class="checkmark"></span>
                         הצג פירוש ברטנורא
                     </label>
-                    <button id="modal-confirm-selection" class="select-button">בחר משנה זו</button>
+                    <button id="select-mishna-button" class="select-button">בחר משנה זו</button>
                 </div>
                 </div>
         </div> 
@@ -95,6 +90,23 @@
         <div id="error-message" class="error-message" style="display: none;"></div>
     </div>
     
-
+    <!-- הוראות הפעלת שרת פיתוח מקומי -->
+    <div class="dev-instructions">
+        <h3>הוראות להפעלת האתר מקומית:</h3>
+        <ol>
+            <li>התקן Node.js מ-<a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a> אם טרם התקנת</li>
+            <li>התקן את כלי ה-live-server הגלובלי: <code>npm install -g live-server</code></li>
+            <li>הפעל את השרת בתיקיית הפרויקט: <code>live-server</code></li>
+            <li>השרת יפתח אוטומטית את הדפדפן עם הכתובת <code>http://localhost:8080</code></li>
+        </ol>
+        <p>הערה: השימוש בשרת פיתוח מקומי פותר את בעיית ה-CORS בטעינת קבצי JSON מקומיים.</p>
+    </div>
+    <script src="mishnah_index.js"></script>
+    <script src="niftar.js"></script>
+    <script>
+        if (typeof window.runNiftarApp === 'function' && Array.isArray(window.mishnahIndex)) {
+            window.runNiftarApp(window.mishnahIndex);
+        }
+    </script>
 </body>
 </html>

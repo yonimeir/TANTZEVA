@@ -95,38 +95,5 @@
     <script src="StateManager.js"></script>
     <script src="UIManager.js"></script>
     <script src="MishnayotApp.js"></script>
-
-    <!-- אתחול האפליקציה -->
-    <script>
-        // יצירת האפליקציה ואתחולה
-        let app;
-        
-        window.addEventListener('DOMContentLoaded', async () => {
-            try {
-                app = new MishnayotApp();
-                await app.initialize();
-                
-                // הגדרת מאזין לשדה שם הנפטר
-                const niftarInput = document.getElementById('niftar-name');
-                if (niftarInput) {
-                    niftarInput.addEventListener('input', (e) => {
-                        app.updateNiftarName(e.target.value);
-                    });
-                    
-                    niftarInput.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') {
-                            app.processNiftarName();
-                        }
-                    });
-                }
-                
-                console.log('אפליקציית המשניות מוכנה לשימוש');
-                
-            } catch (error) {
-                console.error('שגיאה באתחול האפליקציה:', error);
-                alert('שגיאה באתחול האפליקציה: ' + error.message);
-            }
-        });
-    </script>
 </body>
 </html> 

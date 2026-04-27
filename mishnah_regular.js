@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.currentDisplayRef = mishnahRef;
 
         // הצגת טעינה
-        mishnayotDisplay.innerHTML = '<div class="spinner-container"><div class="spinner"></div><div>טוען נתונים מספריא...</div></div>';
+        mishnayotDisplay.innerHTML = 'טוען משנה...';
         contentDisplayArea.style.display = 'block';
 
         // רישום מידע לדיבאג

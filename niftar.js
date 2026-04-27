@@ -37,18 +37,24 @@ window.runNiftarApp = function(passedIndexData) {
         return; // עצירת המשך האתחול
     }
 
-    // רוב הקוד עובר לתוך ה-DOMContentLoaded הפנימי
-document.addEventListener('DOMContentLoaded', function() {
-        console.log("runNiftarApp - DOMContentLoaded fired.");
+    function runWhenDomReady(callback) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', callback);
+        } else {
+            callback();
+        }
+    }
+
+    runWhenDomReady(function() {
+        console.log("runNiftarApp - DOM ready.");
 
         // ------------------- DOM Element References -------------------
         const niftarNameInput = document.getElementById('niftar-name');
-        const submitNameButton = document.getElementById('process-name-button');
-        const selectRandomButton = document.getElementById('random-select-button');
+        const submitNameButton = document.getElementById('submit-name') || document.getElementById('process-name-button');
+        const selectRandomButton = document.getElementById('select-random') || document.getElementById('random-select-button');
         const copySelectedButton = document.getElementById('copy-selected');
-        const clearSelectionButton = document.getElementById('clear-selections-button');
+        const clearSelectionButton = document.getElementById('clear-selection') || document.getElementById('clear-selections-button');
         const letterBoxesContainer = document.getElementById('letter-boxes');
-        // Add fallback to old ID for browsers with cached index.html
         const mishnayotDisplay = document.getElementById('mishnayot-display') || document.getElementById('mishnah-display');
         const selectedMishnayotList = document.getElementById('selected-mishnayot-list');
         const errorMessage = document.getElementById('error-message'); // חשוב להגדיר לפני showError
@@ -58,8 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalPreviewTitle = document.getElementById('modal-preview-title');
         const modalPreviewText = document.getElementById('modal-preview-text');
         const modalPreviewCommentary = document.getElementById('modal-preview-commentary');
-        const closeModalButton = modal.querySelector('.close-modal');
-        const modalConfirmButton = document.getElementById('modal-confirm-selection');
+        const closeModalButton = modal ? modal.querySelector('.close-modal') : null;
+        const modalConfirmButton = document.getElementById('modal-confirm-selection') || document.getElementById('select-mishna-button');
         const nameLettersDisplay = document.getElementById('name-letters-display');
         const processedNameElement = document.getElementById('processed-name');
         const alphabetButtonsContainer = document.getElementById('alphabet-buttons');
@@ -70,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const mishnayotModal = document.getElementById('mishnah-modal');
         // const modalMishnayotList = document.getElementById('modal-mishnah-list'); // Already defined
         const modalLetter = document.getElementById('modal-letter');
-        const closeModal = document.querySelector('.close-modal'); // Already defined
+        const closeModal = modal ? modal.querySelector('.close-modal') : null;
         const showBartenuraCheckbox = document.getElementById('show-bartenura-checkbox');
         const modalPreview = document.getElementById('modal-preview');
         const modalPreviewContent = document.getElementById('modal-preview-content');
@@ -478,8 +484,6 @@ document.addEventListener('DOMContentLoaded', function() {
             modalPreviewTitle.textContent = 'בחרו משנה מהרשימה';
             modalPreviewText.innerHTML = '';
             modalPreviewCommentary.innerHTML = '';
-            if (modalPreview) modalPreview.style.display = 'block';
-            if (modalPreviewContent) modalPreviewContent.style.display = 'block';
             currentSelectedMishnahInModal = null;
             if (modalConfirmButton) modalConfirmButton.disabled = true;
 
@@ -569,8 +573,8 @@ document.addEventListener('DOMContentLoaded', function() {
             saveMishnayotToLocalStorage();
             renderLetterBoxes();
             renderSelectedMishnayotList();
-            const { masechetId, perekNum, mishnahNum } = currentSelectedMishnahInModal;
             closeModalFunc();
+            const { masechetId, perekNum, mishnahNum } = currentSelectedMishnahInModal;
             fetchAndDisplayMishnah(masechetId, perekNum, mishnahNum);
             contentDisplayArea.style.display = 'block';
         }
@@ -612,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function addNeshamahMishnayot() {
             const neshamahLetters = ['נ', 'ש', 'מ', 'ה'];
-            const masechetIdNeshamah = 57; // מקוואות (needs to be integer for strict comparison)
+            const masechetIdNeshamah = "57"; // מקוואות
             const perekNumNeshamah = 7;
             const startMishnahNumNeshamah = 4;
 
@@ -686,6 +690,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showError('לא נבחרו משניות להדפסה');
                 return;
             }
+            // Data is already in localStorage, print.html will read it
             window.location.href = 'print.html';
         }
 
@@ -784,7 +789,6 @@ document.addEventListener('DOMContentLoaded', function() {
         function closeModalFunc() {
             if(modal) modal.style.display = 'none';
             currentSelectedMishnahInModal = null;
-            if (modalPreview) modalPreview.style.display = 'none';
             if (modalPreviewContent) modalPreviewContent.style.display = 'none';
             if (modalPreviewTitle) modalPreviewTitle.textContent = 'בחרו משנה מהרשימה';
             if (modalPreviewText) modalPreviewText.innerHTML = '';
@@ -829,7 +833,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return hebrew || num.toString(); // Fallback to number if conversion fails
         }
 
-        function fetchAndDisplayMishnah(masechetId, perekNum, mishnahNum) {
+       function fetchAndDisplayMishnah(masechetId, perekNum, mishnahNum) {
             console.log(`Fetching mishnah: ${masechetId}, ${perekNum}, ${mishnahNum}`);
             mishnayotDisplay.innerHTML = ''; // Clear previous display
             contentDisplayArea.style.display = 'block'; // Ensure preview area is visible
@@ -840,12 +844,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const titleElement = document.createElement('h3');
             titleElement.textContent = `${masechetName}, פרק ${hebrewPerek} משנה ${hebrewMishnah}`;
             mishnayotDisplay.appendChild(titleElement);
-            
-            // הצגת לוגיקת טעינה
-            const spinnerElement = document.createElement('div');
-            spinnerElement.className = 'spinner-container';
-            spinnerElement.innerHTML = '<div class="spinner"></div><div>טוען נתונים מספריא...</div>';
-            mishnayotDisplay.appendChild(spinnerElement);
 
             let mishnayaData = { text: '', commentary: '' };
             const localStorageKey = `mishnah_${masechetId}_${perekNum}_${mishnahNum}`;
@@ -865,12 +863,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Fetch from Sefaria API
             const masechetApiName = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
-            
-            // Special handling for Pirkei Avot because Sefaria doesn't use the 'Mishnah ' prefix for it
-            const apiBaseText = masechetApiName === 'Pirkei_Avot' ? 'Pirkei_Avot' : `Mishnah_${masechetApiName}`;
-            
-            const mishnahUrl = `https://www.sefaria.org/api/texts/${apiBaseText}.${perekNum}.${mishnahNum}?context=0`;
-            const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_${apiBaseText}.${perekNum}.${mishnahNum}?context=0`;
+             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
+             const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
 
             console.log("Fetching from Sefaria API:", mishnahUrl);
             fetch(mishnahUrl)
@@ -934,12 +928,9 @@ document.addEventListener('DOMContentLoaded', function() {
        function displayMishnah(mishnayaData) {
             // Clear previous content except title if it exists
             const existingTitle = mishnayotDisplay.querySelector('h3');
-            const spinnerElement = mishnayotDisplay.querySelector('.spinner-container');
             const textElement = mishnayotDisplay.querySelector('.mishnah-text');
             const commentaryElement = mishnayotDisplay.querySelector('.bartenura-text');
             const errorElement = mishnayotDisplay.querySelector('.error-text');
-            
-            if (spinnerElement) spinnerElement.remove();
             if (textElement) textElement.remove();
             if (commentaryElement) commentaryElement.remove();
             if (errorElement) errorElement.remove();
@@ -974,10 +965,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function fetchAndDisplayMishnahInModal(masechetId, perekNum, mishnahNum) {
-             if (modalPreview) modalPreview.style.display = 'block';
              modalPreviewContent.style.display = 'block';
              modalPreviewTitle.textContent = 'טוען...';
-             modalPreviewText.innerHTML = '<div class="spinner-container" style="padding: 20px;"><div class="spinner"></div></div>';
+             modalPreviewText.innerHTML = '';
              if (modalConfirmButton) modalConfirmButton.disabled = true;
 
             const masechetName = masechetIdToDisplayName[masechetId] || `מסכת ${masechetId}`;
@@ -1004,8 +994,7 @@ document.addEventListener('DOMContentLoaded', function() {
              }
 
             const masechetApiName = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
-             const apiBaseTextModal = masechetApiName === 'Pirkei_Avot' ? 'Pirkei_Avot' : `Mishnah_${masechetApiName}`;
-             const mishnahUrl = `https://www.sefaria.org/api/texts/${apiBaseTextModal}.${perekNum}.${mishnahNum}?context=0`;
+             const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${masechetApiName}.${perekNum}.${mishnahNum}?context=0`;
              console.log("Fetching for modal:", mishnahUrl);
              fetch(mishnahUrl)
                  .then(response => {
@@ -1086,6 +1075,11 @@ document.addEventListener('DOMContentLoaded', function() {
              copySelectedButton.addEventListener('click', copySelectedMishnayotToClipboard);
          }
 
+         const shareSelectionButton = document.getElementById('share-selection-button');
+         if (shareSelectionButton) {
+             shareSelectionButton.addEventListener('click', shareSelection);
+         }
+
          function copySelectedMishnayotToClipboard() {
              if (currentSelectedMishnayot.length === 0) {
                  showError("אין משניות נבחרות להעתקה.");
@@ -1116,9 +1110,77 @@ document.addEventListener('DOMContentLoaded', function() {
          }
 
 
+         function shareSelection() {
+             if (currentSelectedMishnayot.length === 0) {
+                 showError("אין משניות נבחרות לשיתוף.");
+                 return;
+             }
+             const shareData = {
+                 name: currentNiftarName,
+                 letters: currentNiftarLettersOrdered.join(''),
+                 mishnayot: currentSelectedMishnayot.map(m => ({
+                     masechetId: m.masechetId,
+                     perekNum: m.perekNum,
+                     mishnahNum: m.mishnahNum,
+                     letterIndex: m.letterIndex
+                 }))
+             };
+             const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
+             const shareURL = window.location.origin + window.location.pathname + '?share=' + encoded;
+             
+             if (navigator.share) {
+                 navigator.share({
+                     title: `משניות לעילוי נשמת ${currentNiftarName}`,
+                     text: `דף משניות לעילוי נשמת ${currentNiftarName}`,
+                     url: shareURL
+                 }).catch(err => console.log('שיתוף בוטל:', err));
+             } else {
+                 navigator.clipboard.writeText(shareURL).then(() => {
+                     showSuccess("קישור השיתוף הועתק ללוח!");
+                 }).catch(() => {
+                     prompt('העתק את הקישור:', shareURL);
+                 });
+             }
+         }
+         
+         function loadSharedDataFromURL() {
+             const params = new URLSearchParams(window.location.search);
+             const sharedData = params.get('share');
+             if (sharedData) {
+                 try {
+                     const decoded = JSON.parse(decodeURIComponent(atob(sharedData)));
+                     if (decoded.name) {
+                         localStorage.setItem('niftarName', decoded.name);
+                         currentNiftarName = decoded.name;
+                         niftarNameInput.value = decoded.name;
+                     }
+                     if (decoded.letters) {
+                         localStorage.setItem('niftarLettersOrdered', decoded.letters);
+                         currentNiftarLettersOrdered = decoded.letters.split('');
+                         const uniqueArr = [...new Set(currentNiftarLettersOrdered)].sort();
+                         currentNiftarLetters = uniqueArr;
+                         localStorage.setItem('niftarLetters', uniqueArr.join(''));
+                     }
+                     if (decoded.mishnayot && Array.isArray(decoded.mishnayot)) {
+                         currentSelectedMishnayot = decoded.mishnayot;
+                         saveMishnayotToLocalStorage();
+                     }
+                     window.history.replaceState({}, '', window.location.pathname);
+                     processedNameElement.textContent = currentNiftarName;
+                     nameLettersDisplay.style.display = 'block';
+                     renderLetterBoxes();
+                     renderSelectedMishnayotList();
+                     showSuccess("נטענו נתונים משותפים בהצלחה!");
+                 } catch (e) {
+                     console.error('שגיאה בטעינת נתונים משותפים:', e);
+                 }
+             }
+         }
+
         // איתחול האפליקציה
         initPage();
+        loadSharedDataFromURL();
 
-    }); // End of DOMContentLoaded listener
+    }); // End runWhenDomReady
 
 }; // End of window.runNiftarApp definition
