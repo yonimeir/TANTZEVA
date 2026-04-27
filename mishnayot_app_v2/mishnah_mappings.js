@@ -226,3 +226,7 @@ const mishnah_structure = {
     "Mishnah Yadayim": [5, 6, 4, 4],
     "Mishnah Oktzin": [6, 8, 12] 
 };
+
+window.masechetIdToDisplayName = masechetIdToDisplayName;
+window.masechetIdToApiName = masechetIdToApiName;
+window.mishnah_structure = mishnah_structure;
