@@ -23,18 +23,36 @@ function selectionBelongsToPrintContent(selection) {
     return canvas.contains(range.commonAncestorContainer);
 }
 
+function rangeBelongsToPrintContent(range) {
+    var canvas = getPrintContent();
+    return !!(canvas && range && canvas.contains(range.commonAncestorContainer));
+}
+
 function savePrintSelection() {
     var selection = window.getSelection();
     if (!selectionBelongsToPrintContent(selection)) return;
     savedPrintRange = selection.getRangeAt(0).cloneRange();
 }
 
-function restorePrintSelection() {
+function getUsablePrintRange() {
+    var selection = window.getSelection();
+    if (selectionBelongsToPrintContent(selection) && !selection.getRangeAt(0).collapsed) {
+        return selection.getRangeAt(0).cloneRange();
+    }
+    if (rangeBelongsToPrintContent(savedPrintRange) && !savedPrintRange.collapsed) {
+        return savedPrintRange.cloneRange();
+    }
+    return null;
+}
+
+function restorePrintSelection(range) {
     var canvas = getPrintContent();
-    if (!canvas || !savedPrintRange || !canvas.contains(savedPrintRange.commonAncestorContainer)) return false;
+    var rangeToRestore = range || savedPrintRange;
+    if (!canvas || !rangeBelongsToPrintContent(rangeToRestore)) return false;
+    canvas.focus({ preventScroll: true });
     var selection = window.getSelection();
     selection.removeAllRanges();
-    selection.addRange(savedPrintRange);
+    selection.addRange(rangeToRestore);
     return true;
 }
 
@@ -42,6 +60,85 @@ function setFixedToolbarOffset() {
     var toolbarShell = document.querySelector('.print-toolbar-shell');
     if (!toolbarShell) return;
     document.body.style.paddingTop = toolbarShell.offsetHeight + 'px';
+}
+
+function getInlineTagForCommand(command) {
+    if (command === 'bold') return 'strong';
+    if (command === 'italic') return 'em';
+    if (command === 'underline') return 'u';
+    return '';
+}
+
+function applyInlineCommandToRange(command, range) {
+    var tagName = getInlineTagForCommand(command);
+    if (!tagName || !range || range.collapsed) return false;
+    var wrapper = document.createElement(tagName);
+    try {
+        range.surroundContents(wrapper);
+    } catch (e) {
+        var fragment = range.extractContents();
+        wrapper.appendChild(fragment);
+        range.insertNode(wrapper);
+    }
+
+    var selection = window.getSelection();
+    var newRange = document.createRange();
+    newRange.selectNodeContents(wrapper);
+    selection.removeAllRanges();
+    selection.addRange(newRange);
+    savedPrintRange = newRange.cloneRange();
+    return true;
+}
+
+function getBlockAncestor(node, canvas) {
+    var blockTags = /^(P|DIV|H1|H2|H3|H4|H5|H6|LI|BLOCKQUOTE)$/;
+    var current = node && node.nodeType === Node.TEXT_NODE ? node.parentNode : node;
+    while (current && current !== canvas) {
+        if (current.nodeType === Node.ELEMENT_NODE && blockTags.test(current.tagName)) {
+            return current;
+        }
+        current = current.parentNode;
+    }
+    return null;
+}
+
+function applyAlignmentToRange(command, range) {
+    var alignMap = {
+        justifyRight: 'right',
+        justifyCenter: 'center',
+        justifyLeft: 'left'
+    };
+    var alignment = alignMap[command];
+    var canvas = getPrintContent();
+    if (!alignment || !canvas || !range || range.collapsed) return false;
+
+    var blocks = [];
+    var seen = new Set();
+    var candidates = canvas.querySelectorAll('p, div, h1, h2, h3, h4, h5, h6, li, blockquote');
+    var startBlock = getBlockAncestor(range.startContainer, canvas);
+    var endBlock = getBlockAncestor(range.endContainer, canvas);
+    [startBlock, endBlock].forEach(function(block) {
+        if (block && !seen.has(block)) {
+            seen.add(block);
+            blocks.push(block);
+        }
+    });
+
+    candidates.forEach(function(block) {
+        if (block === canvas || seen.has(block)) return;
+        try {
+            if (range.intersectsNode(block)) {
+                seen.add(block);
+                blocks.push(block);
+            }
+        } catch (e) {}
+    });
+
+    blocks.forEach(function(block) {
+        block.style.textAlign = alignment;
+    });
+    restorePrintSelection(range);
+    return blocks.length > 0;
 }
 
 function setToggleButtonState(buttonId, isOn, onText, offText) {
@@ -347,12 +444,16 @@ window.printDownloadWord = function() {
 };
 
 window.printToggleCommand = function(command) {
-    restorePrintSelection();
-    var selection = window.getSelection();
-    if (!selectionBelongsToPrintContent(selection) || selection.isCollapsed) {
+    var range = getUsablePrintRange();
+    if (!range) {
         return;
     }
-    document.execCommand(command, false, null);
+    restorePrintSelection(range);
+    if (command.indexOf('justify') === 0) {
+        applyAlignmentToRange(command, range);
+    } else {
+        applyInlineCommandToRange(command, range);
+    }
     savePrintSelection();
     updatePrintCommandButtons(command);
 };
@@ -405,7 +506,11 @@ function setupPrintControls() {
     document.querySelectorAll('.command-toggle[data-command]').forEach(function(btn) {
         btn.addEventListener('mousedown', function(event) {
             event.preventDefault();
-            restorePrintSelection();
+            restorePrintSelection(savedPrintRange);
+        });
+        btn.addEventListener('click', function(event) {
+            event.preventDefault();
+            window.printToggleCommand(this.getAttribute('data-command'));
         });
     });
 
@@ -429,11 +534,18 @@ function setupPrintControls() {
     var isBartenuraVisible = localStorage.getItem('printHideBartenura') !== '1';
     setToggleButtonState('toggle-bart-btn', isBartenuraVisible, 'ברטנורא: דלוק', 'ברטנורא: כבוי');
     document.addEventListener('selectionchange', function() {
-        if (selectionBelongsToPrintContent(window.getSelection())) {
+        var selection = window.getSelection();
+        if (selectionBelongsToPrintContent(selection)) {
             savePrintSelection();
             updatePrintCommandButtons();
         }
     });
+    var canvas = getPrintContent();
+    if (canvas) {
+        canvas.addEventListener('mouseup', savePrintSelection);
+        canvas.addEventListener('keyup', savePrintSelection);
+        canvas.addEventListener('touchend', savePrintSelection);
+    }
 }
 
 // טעינת מידע בטעינת העמוד
