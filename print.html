@@ -65,6 +65,13 @@
             text-align: center;
             margin-bottom: 4px;
         }
+        .toolbar-caption-hint {
+            font-size: 11px;
+            font-weight: 400;
+            color: #78909c;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
         .toolbar-secondary button {
             background: #eceff1 !important;
             border: 1px solid #b0bec5 !important;
@@ -114,6 +121,7 @@
         .a4-canvas.hide-bartenura .bartenura-block {
             display: none !important;
         }
+        .a4-canvas .print-extra-insert { margin-top: 0.5em; }
 
         /* במצב הדפסה */
         @media print {
@@ -165,13 +173,13 @@
         <button onclick="document.execCommand('justifyCenter', false, null)">יישור למרכז</button>
         <button onclick="document.execCommand('justifyLeft', false, null)">יישור לשמאל</button>
         <div class="sep"></div>
-        <button id="toggle-bart-btn" onclick="toggleBartenura()">📕 הסתר ברטנורא</button>
         <button class="primary-btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
     </div>
 
     <div class="toolbar toolbar-secondary no-print">
         <span class="toolbar-caption">תוספות להדפסה (מתווספות לדף בלבד)</span>
-        <button type="button" onclick="window.printExtrasToggleBartenura && window.printExtrasToggleBartenura()">ברטנורא</button>
+        <span class="toolbar-caption toolbar-caption-hint">הסדר בדף נקבע לפי נוהג הקבורה — לא לפי סדר הלחיצות: תהילים על הקבר, קיט לפי שם, קיט מלא, אל מלא רחמים ויזכור</span>
+        <button type="button" id="toggle-bart-btn" onclick="toggleBartenura()">📕 הסתר ברטנורא</button>
         <button type="button" onclick="window.printAppendTehillimCemetery && window.printAppendTehillimCemetery()">תהילים על הקבר</button>
         <button type="button" onclick="window.printAppendKit119ByName && window.printAppendKit119ByName()">קיט לפי שם הנפטר</button>
         <button type="button" onclick="window.printAppendKit119Full && window.printAppendKit119Full()">קיט מלא</button>

@@ -13,12 +13,41 @@ function escapeHtml(str) {
 /** פרקי תהילים נפוצים לביקור בקבר (כמו ברשימת «על הקבר» בדף התהילים) */
 var PRINT_CEMETERY_PSALM_CHAPTERS = [16, 17, 23, 25, 33, 49, 91, 104, 130, 142, 150];
 
-function appendHtmlToPrint(html) {
-    const printContent = document.getElementById('print-content');
-    if (!printContent) return;
-    const tpl = document.createElement('template');
-    tpl.innerHTML = html.trim();
-    printContent.appendChild(tpl.content.cloneNode(true));
+/**
+ * סדר נהוג להקריאה על הקבר: תהילים לפי פרקים → קיט קי״ט לפי שם → קיט מלא → אל מלא ויזכור.
+ * ברטנורא (משנה) לא כלול — זה רק הצגה/הסתרה של פירוש קיים.
+ */
+var PRINT_EXTRA_ORDER = {
+    cemetery: 10,
+    kit119name: 20,
+    kit119full: 30,
+    elmalehyizkor: 40
+};
+
+function insertOrderedPrintExtra(innerHtml, kind) {
+    var order = PRINT_EXTRA_ORDER[kind];
+    if (order == null) order = 99;
+    var canvas = document.getElementById('print-content');
+    if (!canvas) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'print-extra-insert';
+    wrap.setAttribute('data-extra-order', String(order));
+    wrap.innerHTML = innerHtml.trim();
+
+    var inserts = canvas.querySelectorAll('.print-extra-insert');
+    var insertBeforeNode = null;
+    for (var i = 0; i < inserts.length; i++) {
+        var o = parseInt(inserts[i].getAttribute('data-extra-order'), 10);
+        if (o > order) {
+            insertBeforeNode = inserts[i];
+            break;
+        }
+    }
+    if (insertBeforeNode) {
+        canvas.insertBefore(wrap, insertBeforeNode);
+    } else {
+        canvas.appendChild(wrap);
+    }
 }
 
 async function fetchPsalmsVerses(chapterNum) {
@@ -77,11 +106,6 @@ function buildKit119SectionsFromName(name) {
     return sections;
 }
 
-window.printExtrasToggleBartenura = function() {
-    var b = document.getElementById('toggle-bart-btn');
-    if (b) b.click();
-};
-
 window.printAppendTehillimCemetery = async function() {
     var loading = document.getElementById('loading');
     if (loading) loading.style.display = 'flex';
@@ -92,7 +116,7 @@ window.printAppendTehillimCemetery = async function() {
                 return htmlPsalmsChapterBlock('תהילים פרק ' + ch, verses);
             });
         }));
-        batches.forEach(function(html) { appendHtmlToPrint(html); });
+        insertOrderedPrintExtra(batches.join(''), 'cemetery');
     } catch (e) {
         console.error(e);
         alert('שגיאה בטעינת פרקי תהילים מהרשת: ' + (e.message || e));
@@ -105,10 +129,11 @@ window.printAppendKit119ByName = function() {
     var name = localStorage.getItem('niftarName') || '';
     var sections = buildKit119SectionsFromName(name);
     if (sections.length === 0) {
-        appendHtmlToPrint(
+        insertOrderedPrintExtra(
             '<hr class="print-extra-sep"><div class="print-extra-block"><p class="print-extra-body">' +
-            'לא נמצאו אותיות לקיט (הזינו שם נפטר בעמוד המשניות ושמרו, או הוסיפו ידנית שם בזיכרון הדפדפן).' +
-            '</p></div>'
+                'לא נמצאו אותיות לקיט (הזינו שם נפטר בעמוד המשניות ושמרו, או הוסיפו ידנית שם בזיכרון הדפדפן).' +
+                '</p></div>',
+            'kit119name'
         );
         return;
     }
@@ -124,7 +149,10 @@ window.printAppendKit119ByName = function() {
         }
         html += '</div>';
     }
-    appendHtmlToPrint('<hr class="print-extra-sep"><div class="print-extra-block kit119-by-name">' + html + '</div>');
+    insertOrderedPrintExtra(
+        '<hr class="print-extra-sep"><div class="print-extra-block kit119-by-name">' + html + '</div>',
+        'kit119name'
+    );
 };
 
 window.printAppendKit119Full = async function() {
@@ -132,7 +160,10 @@ window.printAppendKit119Full = async function() {
     if (loading) loading.style.display = 'flex';
     try {
         var verses = await fetchPsalmsVerses(119);
-        appendHtmlToPrint(htmlPsalmsChapterBlock('תהילים פרק קי״ט (מלא)', verses));
+        insertOrderedPrintExtra(
+            htmlPsalmsChapterBlock('תהילים פרק קי״ט (מלא)', verses),
+            'kit119full'
+        );
     } catch (e) {
         console.error(e);
         alert('שגיאה בטעינת פרק קי״ט: ' + (e.message || e));
@@ -160,7 +191,7 @@ window.printAppendElMalehYizkor = function() {
         '</strong> שעלתה למרום; בשכר הצדקה והתפילה הנאמרים להלן לעילוי נשמתה, תהא נשמה צרורה בצרור החיים עם נשמות אברהם יצחק ויעקב ושאר הצדיקים והצדקניות בגן עדן, ונאמר אמן.</p>' +
         '</div>' +
         '</div>';
-    appendHtmlToPrint(block);
+    insertOrderedPrintExtra(block, 'elmalehyizkor');
 };
 
 // טעינת מידע בטעינת העמוד
@@ -305,17 +336,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 (bartenuraText
                     ? '<div class="bartenura-block"><strong>ברטנורא: </strong>' + bartenuraText + '</div>'
                     : '') +
-                '</div>';
-        }
-
-        if (niftarName) {
-            htmlContent +=
-                '<hr style="margin-top: 30px; margin-bottom: 20px;">' +
-                '<h3 style="text-align:center;">תפילת א־ל מלא רחמים</h3>' +
-                '<div style="text-align: center; line-height: 2;">' +
-                'אֵל מָלֵא רַחֲמִים שׁוֹכֵן בַּמְּרוֹמִים, הַמְצֵא מְנוּחָה נְכוֹנָה עַל כַּנְפֵי הַשְּׁכִינָה, בְּמַעֲלוֹת קְדוֹשִׁים וּטְהוֹרִים כְּזֹהַר הָרָקִיעַ מַזְהִירִים, אֶת נִשְׁמַת ' +
-                escapeHtml(niftarName) +
-                ' שֶׁהָלַךְ לְעוֹלָמוֹ, בַּעֲבוּר שֶׁנָּדְבוּ צְדָקָה בְּעַד הַזְכָּרַת נִשְׁמָתוֹ, בְּגַן עֵדֶן תְּהֵא מְנוּחָתוֹ, לָכֵן בַּעַל הָרַחֲמִים יַסְתִּירֵהוּ בְּסֵתֶר כְּנָפָיו לְעוֹלָמִים, וְיִצְרוֹר בִּצְרוֹר הַחַיִּים אֶת נִשְׁמָתוֹ, ה\' הוּא נַחֲלָתוֹ, וְיָנוּחַ בְּשָׁלוֹם עַל מִשְׁכָּבוֹ, וְנֹאמַר אָמֵן.' +
                 '</div>';
         }
 
