@@ -261,8 +261,14 @@ window.printAppendElMalehYizkor = function() {
 window.printApplyFontFamily = function(fontFamily) {
     var canvas = getPrintContent();
     if (!canvas || !fontFamily) return;
+    canvas.style.setProperty('--print-font-family', fontFamily);
     canvas.style.fontFamily = fontFamily;
     localStorage.setItem('printFontFamily', fontFamily);
+    var fontSelect = document.getElementById('print-font-family');
+    if (fontSelect) {
+        fontSelect.value = fontFamily;
+        fontSelect.style.fontFamily = fontFamily;
+    }
 };
 
 window.printApplyFontSize = function(sizeValue) {
@@ -271,6 +277,7 @@ window.printApplyFontSize = function(sizeValue) {
     size = Math.max(10, Math.min(32, size));
     var canvas = getPrintContent();
     if (!canvas) return;
+    canvas.style.setProperty('--print-base-size', size + 'pt');
     canvas.style.fontSize = size + 'pt';
     localStorage.setItem('printFontSize', String(size));
     var input = document.getElementById('print-font-size');
@@ -285,10 +292,14 @@ window.printDownloadWord = function() {
     var html =
         '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">' +
         '<style>' +
-        'body{direction:rtl;text-align:right;font-family:David,serif;font-size:16pt;line-height:1.6;color:#000;}' +
+        'body{direction:rtl;text-align:right;font-family:' +
+        (localStorage.getItem('printFontFamily') || "'David', 'Frank Ruhl Libre', serif") +
+        ';font-size:' +
+        (localStorage.getItem('printFontSize') || '16') +
+        'pt;line-height:1.6;color:#000;}' +
         'h1,h2,h3{text-align:center}.mishnah-title{font-weight:bold;text-decoration:underline;margin-top:1em}' +
-        '.bartenura-block{font-size:13pt;color:#444;margin-top:10px;padding-right:15px;border-right:3px solid #ccc}' +
-        '.print-extra-body{font-size:13pt}.verse-num{font-weight:bold;margin-left:.25em}' +
+        '.bartenura-block{font-size:.82em;color:#444;margin-top:10px;padding-right:15px;border-right:3px solid #ccc}' +
+        '.print-extra-body{font-size:.92em}.verse-num{font-weight:bold;margin-left:.25em}' +
         '</style></head><body>' +
         canvas.innerHTML +
         '</body></html>';
@@ -356,6 +367,8 @@ function setupPrintControls() {
     if (savedFont) {
         if (fontSelect) fontSelect.value = savedFont;
         window.printApplyFontFamily(savedFont);
+    } else if (fontSelect) {
+        fontSelect.style.fontFamily = fontSelect.value;
     }
     if (savedSize) {
         if (sizeInput) sizeInput.value = savedSize;

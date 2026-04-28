@@ -6,6 +6,8 @@
     <title>עורך הדפסה - משניות לעילוי נשמת</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&family=Heebo:wght@400;700&display=swap');
+
         /* איפוס בסיסי לעמוד ההדפסה בלבד */
         body { margin: 0; padding: 0; background-color: #f4f6f9; font-family: 'Assistant', Arial, sans-serif; }
         
@@ -87,6 +89,9 @@
         .toolbar-control input[type="text"] {
             width: 150px;
         }
+        #print-font-family {
+            min-width: 150px;
+        }
 
         .toolbar-secondary {
             flex-wrap: wrap;
@@ -126,6 +131,8 @@
 
         /* קנבס עבודה דמוי נייר A4 */
         .a4-canvas {
+            --print-font-family: 'David', 'Frank Ruhl Libre', serif;
+            --print-base-size: 16pt;
             background-color: white;
             /* אינדיקציה חזותית לגבולות הדף (כל 297 מ"מ) רק במסך */
             background-image: linear-gradient(to bottom, transparent calc(297mm - 2px), #b0bec5 calc(297mm - 2px), #b0bec5 297mm);
@@ -137,8 +144,8 @@
             margin: 40px auto;
             padding: 20mm;
             box-shadow: 0 0 20px rgba(0,0,0,0.15);
-            font-family: 'David', 'Frank Ruhl Libre', serif;
-            font-size: 16pt;
+            font-family: var(--print-font-family);
+            font-size: var(--print-base-size);
             line-height: 1.6;
             color: black;
             outline: none;
@@ -146,13 +153,14 @@
             text-align: justify;
         }
 
-        .a4-canvas h1 { text-align: center; margin-bottom: 5px; font-size: 26pt; }
-        .a4-canvas h2 { text-align: center; font-size: 18pt; margin-bottom: 30px; font-weight: normal; }
+        .a4-canvas h1 { text-align: center; margin-bottom: 5px; font-size: calc(var(--print-base-size) * 1.6); }
+        .a4-canvas h2 { text-align: center; font-size: calc(var(--print-base-size) * 1.15); margin-bottom: 30px; font-weight: normal; }
         .a4-canvas .mishnah-block { margin-bottom: 25px; }
-        .a4-canvas .mishnah-title { font-weight: bold; font-size: 18pt; margin-bottom: 10px; color: #000; text-decoration: underline; }
-        .a4-canvas .bartenura-block { font-size: 13pt; color: #444; margin-top: 10px; padding-right: 15px; border-right: 3px solid #ccc; }
-        .a4-canvas .print-extra-title { font-size: 16pt; color: #000; margin-top: 1em; text-align: center; font-weight: bold; }
-        .a4-canvas .print-extra-body { font-size: 13pt; color: #222; text-align: justify; }
+        .a4-canvas .mishnah-title { font-weight: bold; font-size: calc(var(--print-base-size) * 1.15); margin-bottom: 10px; color: #000; text-decoration: underline; }
+        .a4-canvas .mishnah-content { font-family: var(--print-font-family); font-size: var(--print-base-size); line-height: 1.8; }
+        .a4-canvas .bartenura-block { font-size: calc(var(--print-base-size) * 0.82); color: #444; margin-top: 10px; padding-right: 15px; border-right: 3px solid #ccc; }
+        .a4-canvas .print-extra-title { font-size: var(--print-base-size); color: #000; margin-top: 1em; text-align: center; font-weight: bold; }
+        .a4-canvas .print-extra-body { font-size: calc(var(--print-base-size) * 0.92); color: #222; text-align: justify; }
         .a4-canvas .verse-num { font-weight: bold; color: #37474f; margin-left: 0.25em; }
 
         /* מאפשר הסתרה דינאמית של הברטנורא */
@@ -214,15 +222,15 @@
         <label class="toolbar-control">
             סוג גופן
             <select id="print-font-family" onchange="window.printApplyFontFamily && window.printApplyFontFamily(this.value)">
-                <option value="'David', 'Frank Ruhl Libre', serif">דוד / ספר</option>
-                <option value="'Frank Ruhl Libre', 'David', serif">פרנק ריהל</option>
-                <option value="'Assistant', 'Heebo', Arial, sans-serif">אסיסטנט</option>
-                <option value="Arial, sans-serif">Arial</option>
+                <option value="'David', 'Frank Ruhl Libre', serif" style="font-family: 'David', 'Frank Ruhl Libre', serif;">דוד / ספר</option>
+                <option value="'Frank Ruhl Libre', 'David', serif" style="font-family: 'Frank Ruhl Libre', 'David', serif;">פרנק ריהל</option>
+                <option value="'Assistant', 'Heebo', Arial, sans-serif" style="font-family: 'Assistant', 'Heebo', Arial, sans-serif;">אסיסטנט</option>
+                <option value="Arial, sans-serif" style="font-family: Arial, sans-serif;">Arial</option>
             </select>
         </label>
         <label class="toolbar-control">
             גודל
-            <input id="print-font-size" type="number" min="10" max="32" step="1" value="16" onchange="window.printApplyFontSize && window.printApplyFontSize(this.value)">
+            <input id="print-font-size" type="number" min="10" max="32" step="1" value="16" oninput="window.printApplyFontSize && window.printApplyFontSize(this.value)" onchange="window.printApplyFontSize && window.printApplyFontSize(this.value)">
         </label>
         <div class="sep"></div>
         <button class="primary-btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
