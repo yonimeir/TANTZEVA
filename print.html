@@ -11,10 +11,16 @@
         /* איפוס בסיסי לעמוד ההדפסה בלבד */
         body { margin: 0; padding: 0; background-color: #f4f6f9; font-family: 'Assistant', Arial, sans-serif; }
         
+        .print-toolbar-shell {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1500;
+        }
+
         /* סרגל כלים - מוצג רק למסך */
         .toolbar {
-            position: sticky;
-            top: 0;
             background: #ffffff;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             padding: 15px 20px;
@@ -22,7 +28,6 @@
             justify-content: center;
             align-items: center;
             gap: 15px;
-            z-index: 1000;
             border-bottom: 2px solid #e0e0e0;
         }
 
@@ -153,6 +158,13 @@
             text-align: justify;
         }
 
+        .a4-canvas h1,
+        .a4-canvas h2,
+        .a4-canvas h3,
+        .a4-canvas .mishnah-title,
+        .a4-canvas .print-extra-title {
+            font-family: var(--print-font-family) !important;
+        }
         .a4-canvas h1 { text-align: center; margin-bottom: 5px; font-size: calc(var(--print-base-size) * 1.6); }
         .a4-canvas h2 { text-align: center; font-size: calc(var(--print-base-size) * 1.15); margin-bottom: 30px; font-weight: normal; }
         .a4-canvas .mishnah-block { margin-bottom: 25px; }
@@ -172,7 +184,8 @@
         /* במצב הדפסה */
         @media print {
             body { background: white; margin: 0; padding: 0; }
-            .toolbar { display: none !important; }
+            .toolbar,
+            .print-toolbar-shell { display: none !important; }
             .a4-canvas { 
                 margin: 0; 
                 padding: 0; 
@@ -207,8 +220,9 @@
         <span>...מכין משניות להדפסה</span>
     </div>
 
+    <div class="print-toolbar-shell no-print">
     <!-- סרגל כלים שיוצג רק על המסך -->
-    <div class="toolbar no-print">
+    <div class="toolbar">
         <button class="back-btn" onclick="window.history.back()">↩ חזור לבחירה</button>
         <div class="sep"></div>
         <button type="button" class="toggle-btn command-toggle" data-command="bold" aria-pressed="false" onclick="window.printToggleCommand && window.printToggleCommand('bold')"><b>B</b> מודגש</button>
@@ -237,7 +251,7 @@
         <button type="button" class="primary-btn" onclick="window.printDownloadWord && window.printDownloadWord()">⬇ הורד Word</button>
     </div>
 
-    <div class="toolbar toolbar-secondary no-print">
+    <div class="toolbar toolbar-secondary">
         <span class="toolbar-caption">תוספות להדפסה (מתווספות לדף בלבד)</span>
         <span class="toolbar-caption toolbar-caption-hint">הסדר בדף נקבע לפי נוהג הקבורה — לא לפי סדר הלחיצות: תהילים על הקבר, קיט לפי שם, קיט מלא, אל מלא רחמים ויזכור</span>
         <label class="toolbar-control">
@@ -249,6 +263,7 @@
         <button type="button" id="toggle-kit119name-btn" class="toggle-btn" aria-pressed="false" onclick="window.printAppendKit119ByName && window.printAppendKit119ByName()">קיט לפי שם הנפטר</button>
         <button type="button" id="toggle-kit119full-btn" class="toggle-btn" aria-pressed="false" onclick="window.printAppendKit119Full && window.printAppendKit119Full()">קיט מלא</button>
         <button type="button" id="toggle-elmalehyizkor-btn" class="toggle-btn" aria-pressed="false" onclick="window.printAppendElMalehYizkor && window.printAppendElMalehYizkor()">אל מלא רחמים ויזכור</button>
+    </div>
     </div>
 
     <!-- משטח העבודה נטו -->

@@ -14,6 +14,36 @@ function getPrintContent() {
     return document.getElementById('print-content');
 }
 
+var savedPrintRange = null;
+
+function selectionBelongsToPrintContent(selection) {
+    var canvas = getPrintContent();
+    if (!canvas || !selection || selection.rangeCount === 0) return false;
+    var range = selection.getRangeAt(0);
+    return canvas.contains(range.commonAncestorContainer);
+}
+
+function savePrintSelection() {
+    var selection = window.getSelection();
+    if (!selectionBelongsToPrintContent(selection)) return;
+    savedPrintRange = selection.getRangeAt(0).cloneRange();
+}
+
+function restorePrintSelection() {
+    var canvas = getPrintContent();
+    if (!canvas || !savedPrintRange || !canvas.contains(savedPrintRange.commonAncestorContainer)) return false;
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(savedPrintRange);
+    return true;
+}
+
+function setFixedToolbarOffset() {
+    var toolbarShell = document.querySelector('.print-toolbar-shell');
+    if (!toolbarShell) return;
+    document.body.style.paddingTop = toolbarShell.offsetHeight + 'px';
+}
+
 function setToggleButtonState(buttonId, isOn, onText, offText) {
     var btn = document.getElementById(buttonId);
     if (!btn) return;
@@ -317,7 +347,13 @@ window.printDownloadWord = function() {
 };
 
 window.printToggleCommand = function(command) {
+    restorePrintSelection();
+    var selection = window.getSelection();
+    if (!selectionBelongsToPrintContent(selection) || selection.isCollapsed) {
+        return;
+    }
     document.execCommand(command, false, null);
+    savePrintSelection();
     updatePrintCommandButtons(command);
 };
 
@@ -363,6 +399,15 @@ function setupPrintControls() {
     var fontSelect = document.getElementById('print-font-family');
     var sizeInput = document.getElementById('print-font-size');
     var fatherInput = document.getElementById('niftar-father-name');
+    setFixedToolbarOffset();
+    window.addEventListener('resize', setFixedToolbarOffset);
+
+    document.querySelectorAll('.command-toggle[data-command]').forEach(function(btn) {
+        btn.addEventListener('mousedown', function(event) {
+            event.preventDefault();
+            restorePrintSelection();
+        });
+    });
 
     if (savedFont) {
         if (fontSelect) fontSelect.value = savedFont;
@@ -384,7 +429,8 @@ function setupPrintControls() {
     var isBartenuraVisible = localStorage.getItem('printHideBartenura') !== '1';
     setToggleButtonState('toggle-bart-btn', isBartenuraVisible, 'ברטנורא: דלוק', 'ברטנורא: כבוי');
     document.addEventListener('selectionchange', function() {
-        if (document.activeElement && document.activeElement.id === 'print-content') {
+        if (selectionBelongsToPrintContent(window.getSelection())) {
+            savePrintSelection();
             updatePrintCommandButtons();
         }
     });

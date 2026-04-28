@@ -828,6 +828,14 @@ header h1 {
     margin-left: 8px;
 }
 
+.preview-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+    color: #37474f;
+    font-weight: 600;
+}
+
 .select-button {
     background-color: #3f51b5;
     color: white;

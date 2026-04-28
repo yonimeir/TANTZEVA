@@ -78,6 +78,7 @@ window.runNiftarApp = function(passedIndexData) {
         const modalLetter = document.getElementById('modal-letter');
         const closeModal = modal ? modal.querySelector('.close-modal') : null;
         const showBartenuraCheckbox = document.getElementById('show-bartenura-checkbox');
+        const previewBartenuraCheckbox = document.getElementById('preview-bartenura-checkbox');
         const modalPreview = document.getElementById('modal-preview');
         const modalPreviewContent = document.getElementById('modal-preview-content');
 
@@ -916,7 +917,7 @@ window.runNiftarApp = function(passedIndexData) {
                 try {
                     const parsedData = JSON.parse(savedMishnah);
                     console.log("Found mishnah in localStorage.");
-                    if (!showBartenuraCheckbox.checked || parsedData.commentary) {
+                    if (!previewBartenuraCheckbox || !previewBartenuraCheckbox.checked || parsedData.commentary) {
                         displayMishnah(parsedData); // Display from local storage
                         return;
                     }
@@ -943,7 +944,7 @@ window.runNiftarApp = function(passedIndexData) {
                      if (data && data.he) {
                          mishnayaData.text = Array.isArray(data.he) ? data.he.join('<br>') : data.he;
                          console.log("Mishnah text fetched successfully.");
-                         if (showBartenuraCheckbox.checked) {
+                         if (previewBartenuraCheckbox && previewBartenuraCheckbox.checked) {
                               console.log("Fetching Bartenura:", bartenuraUrl);
                               return fetch(bartenuraUrl);
                          } else {
@@ -998,9 +999,11 @@ window.runNiftarApp = function(passedIndexData) {
             const textElement = mishnayotDisplay.querySelector('.mishnah-text');
             const commentaryElement = mishnayotDisplay.querySelector('.bartenura-text');
             const errorElement = mishnayotDisplay.querySelector('.error-text');
+            const infoElement = mishnayotDisplay.querySelector('.info-text');
             if (textElement) textElement.remove();
             if (commentaryElement) commentaryElement.remove();
             if (errorElement) errorElement.remove();
+            if (infoElement) infoElement.remove();
 
             // Display Mishnah text
             if (mishnayaData && mishnayaData.text) {
@@ -1018,12 +1021,13 @@ window.runNiftarApp = function(passedIndexData) {
             }
 
             // Display Bartenura if needed and available
-            if (mishnayaData && mishnayaData.commentary && showBartenuraCheckbox.checked) {
+            const shouldShowPreviewBartenura = previewBartenuraCheckbox && previewBartenuraCheckbox.checked;
+            if (mishnayaData && mishnayaData.commentary && shouldShowPreviewBartenura) {
                  const newCommentaryElement = document.createElement('div');
                  newCommentaryElement.className = 'bartenura-text';
                  newCommentaryElement.innerHTML = `<strong>פירוש ברטנורא:</strong><br>${mishnayaData.commentary}`;
                  mishnayotDisplay.appendChild(newCommentaryElement); // Append commentary at the end
-            } else if (showBartenuraCheckbox.checked && !(mishnayaData && mishnayaData.commentary)) {
+            } else if (shouldShowPreviewBartenura && !(mishnayaData && mishnayaData.commentary)) {
                  const noCommentaryElement = document.createElement('div');
                  noCommentaryElement.className = 'info-text';
                  noCommentaryElement.textContent = 'פירוש ברטנורא אינו זמין למשנה זו.';
@@ -1144,6 +1148,15 @@ window.runNiftarApp = function(passedIndexData) {
         });
         if (closeModalButton) closeModalButton.addEventListener('click', closeModalFunc);
         if (modalConfirmButton) modalConfirmButton.addEventListener('click', selectMishnahFromModal);
+        if (previewBartenuraCheckbox) previewBartenuraCheckbox.addEventListener('change', () => {
+            if (currentDisplayedMishnah) {
+                fetchAndDisplayMishnah(
+                    currentDisplayedMishnah.masechetId,
+                    currentDisplayedMishnah.perekNum,
+                    currentDisplayedMishnah.mishnahNum
+                );
+            }
+        });
         if (showBartenuraCheckbox) showBartenuraCheckbox.addEventListener('change', () => {
             if (modal && modal.style.display === 'block' && currentSelectedMishnahInModal) {
                 fetchAndDisplayMishnahInModal(
