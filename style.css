@@ -876,3 +876,368 @@ header h1 {
         width: 100%;
     }
 }
+
+/* שכבת עיצוב חדשה לדף הראשי - עוקפת כללים ישנים וסותרי צבע */
+body {
+    background:
+        radial-gradient(circle at top right, rgba(72, 113, 191, 0.16), transparent 30rem),
+        linear-gradient(180deg, #f6f8fc 0%, #eef3f8 100%);
+    color: #1f2937;
+}
+
+.container {
+    max-width: 1120px;
+    padding: 32px 22px 48px;
+}
+
+header {
+    margin: 0 auto 28px;
+    padding: 18px 16px 8px;
+    background: transparent;
+}
+
+header h1 {
+    color: #18345d;
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+
+header h1::after {
+    content: "";
+    display: block;
+    width: 92px;
+    height: 4px;
+    margin: 16px auto 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #18345d, #5a99b7);
+}
+
+.main-content {
+    display: grid;
+    gap: 22px;
+}
+
+.name-input-section,
+.selected-mishnayot-section,
+.mishnah-preview,
+.modal-content {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(24, 52, 93, 0.1);
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(24, 52, 93, 0.1);
+}
+
+.name-input-section {
+    padding: 28px;
+}
+
+.name-input-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+#niftar-name {
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 17px;
+    padding: 12px 16px;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+#niftar-name:focus {
+    outline: 3px solid rgba(72, 113, 191, 0.18);
+    border-color: #4871bf;
+}
+
+button,
+.button {
+    border-radius: 999px;
+    border: 0;
+    font-weight: 700;
+    box-shadow: 0 10px 20px rgba(24, 52, 93, 0.12);
+}
+
+#process-name-button,
+.select-button,
+#prepare-print-button {
+    background: linear-gradient(135deg, #18345d, #4871bf) !important;
+    color: #ffffff !important;
+}
+
+#random-select-button {
+    background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
+    color: #ffffff !important;
+}
+
+#add-neshamah-button {
+    background: linear-gradient(135deg, #6d28d9, #8b5cf6) !important;
+    color: #ffffff !important;
+}
+
+#clear-selections-button {
+    background: linear-gradient(135deg, #b91c1c, #ef4444) !important;
+    color: #ffffff !important;
+}
+
+#share-selection-button,
+#copy-selected {
+    background: #ffffff !important;
+    color: #18345d !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 8px 18px rgba(24, 52, 93, 0.08);
+}
+
+button:hover,
+.button:hover {
+    transform: translateY(-1px);
+    filter: saturate(1.05);
+}
+
+.letters-header h2 {
+    border: 0;
+    color: #18345d;
+    text-align: center;
+    margin: 10px 0 16px;
+    padding: 0;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.letter-boxes-container {
+    justify-content: center;
+    gap: 14px;
+}
+
+.letter-box {
+    width: 118px;
+    height: 118px;
+    border: 1px solid #c7d2fe;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff, #f7fbff);
+    box-shadow: 0 10px 22px rgba(24, 52, 93, 0.08);
+}
+
+.letter-box.selected {
+    border-color: #4871bf;
+    background: linear-gradient(180deg, #eef6ff, #ffffff);
+}
+
+.letter {
+    color: #18345d;
+}
+
+.mishnah-info {
+    color: #475569;
+}
+
+.remove-letter {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+    box-shadow: none !important;
+    opacity: 1;
+}
+
+.alphabet-section {
+    margin: 12px auto 22px;
+    padding: 16px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 18px;
+    background: #f8fafc;
+}
+
+.alphabet-add-hint {
+    color: #334155;
+    text-align: center;
+    margin: 0 0 12px;
+}
+
+#alphabet-buttons button.alphabet-button,
+.alphabet-buttons-container button.alphabet-button {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: #ffffff !important;
+    color: #18345d !important;
+    border: 1px solid #c7d2fe !important;
+    box-shadow: 0 6px 14px rgba(24, 52, 93, 0.08) !important;
+    font-weight: 800;
+}
+
+#alphabet-buttons button.alphabet-button:hover,
+.alphabet-buttons-container button.alphabet-button:hover {
+    background: #ddeeff !important;
+    color: #10213c !important;
+    border-color: #4871bf !important;
+}
+
+.action-buttons {
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-buttons button {
+    min-height: 42px;
+    padding: 10px 16px;
+}
+
+.selected-mishnayot-section {
+    padding: 26px;
+}
+
+.selected-mishnayot-section h3 {
+    color: #18345d;
+    text-align: right;
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 18px;
+}
+
+.selected-mishnayot-list {
+    overflow-x: auto;
+    border-radius: 18px;
+    background: #f8fafc;
+}
+
+.selected-mishnayot-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 680px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.selected-mishnayot-table th {
+    background: #f1f5f9;
+    color: #18345d;
+    font-weight: 800;
+    padding: 14px 16px;
+    text-align: right;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.selected-mishnayot-table td {
+    color: #1f2937;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: middle;
+}
+
+.selected-mishnayot-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.selected-mishnayot-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.selected-mishnayot-table td:last-child {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.selected-mishnayot-table .action-button,
+#selected-mishnayot-list .action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 58px;
+    min-height: 34px;
+    margin: 0;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff !important;
+    border: 0 !important;
+    box-shadow: none;
+}
+
+.selected-mishnayot-table .view-button,
+#selected-mishnayot-list .view-button {
+    background: #2563eb !important;
+}
+
+.selected-mishnayot-table .replace-button,
+#selected-mishnayot-list .replace-button {
+    background: #d97706 !important;
+}
+
+.selected-mishnayot-table .remove-button,
+#selected-mishnayot-list .remove-button {
+    background: #dc2626 !important;
+}
+
+.empty-message {
+    padding: 24px;
+    color: #64748b;
+    text-align: center;
+}
+
+.site-footer-links {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(24, 52, 93, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(24, 52, 93, 0.08);
+}
+
+.site-footer-links a {
+    color: #18345d;
+}
+
+.modal {
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    border-radius: 24px;
+}
+
+.modal-mishnah-item {
+    border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 12px 36px;
+    }
+
+    .name-input-container {
+        grid-template-columns: 1fr;
+    }
+
+    #process-name-button {
+        margin: 0;
+        width: 100%;
+    }
+
+    .name-input-section,
+    .selected-mishnayot-section {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .letter-box {
+        width: 94px;
+        height: 94px;
+    }
+
+    .selected-mishnayot-table {
+        min-width: 620px;
+    }
+}
