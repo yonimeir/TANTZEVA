@@ -120,6 +120,7 @@ window.runNiftarApp = function(passedIndexData) {
         let currentModalLetterForReplacement = '';
         let currentModalLetterIndex = -1;
         let currentSelectedMishnahInModal = null;
+        let currentDisplayedMishnah = null;
 
         // ------------------- Mappings (can stay here) ------------------------
         const masechetIdToDisplayName = {
@@ -671,9 +672,9 @@ window.runNiftarApp = function(passedIndexData) {
 
         function addNeshamahMishnayot() {
             const neshamahLetters = ['נ', 'ש', 'מ', 'ה'];
-            const masechetIdNeshamah = "57"; // מקוואות
+            const masechetIdNeshamah = 57; // מקוואות
             const perekNumNeshamah = 7;
-            const startMishnahNumNeshamah = 4;
+            const startMishnahNumNeshamah = 3;
 
              if (!currentNiftarName) {
                 showError("יש להזין שם נפטר תחילה");
@@ -727,7 +728,7 @@ window.runNiftarApp = function(passedIndexData) {
             saveMishnayotToLocalStorage();
             renderLetterBoxes();
             renderSelectedMishnayotList();
-            showSuccess("נוספו משניות נשמ\"ה ממסכת מקוואות (פ\"ז מ\"ד-ז')");
+            showSuccess("נוספו משניות נשמ\"ה ממסכת מקוואות (פ\"ז מ\"ג-ו')");
         }
 
         function clearSelections() {
@@ -896,6 +897,7 @@ window.runNiftarApp = function(passedIndexData) {
 
        function fetchAndDisplayMishnah(masechetId, perekNum, mishnahNum) {
             console.log(`Fetching mishnah: ${masechetId}, ${perekNum}, ${mishnahNum}`);
+            currentDisplayedMishnah = { masechetId, perekNum, mishnahNum };
             mishnayotDisplay.innerHTML = ''; // Clear previous display
             contentDisplayArea.style.display = 'block'; // Ensure preview area is visible
 
@@ -914,8 +916,11 @@ window.runNiftarApp = function(passedIndexData) {
                 try {
                     const parsedData = JSON.parse(savedMishnah);
                     console.log("Found mishnah in localStorage.");
-                    displayMishnah(parsedData); // Display from local storage
-                    return;
+                    if (!showBartenuraCheckbox.checked || parsedData.commentary) {
+                        displayMishnah(parsedData); // Display from local storage
+                        return;
+                    }
+                    // המשנה שמורה בלי פירוש; אם המשתמש ביקש ברטנורא נטען מחדש מה-API.
                 } catch (e) {
                     console.error("Error parsing localStorage data:", e);
                      localStorage.removeItem(localStorageKey); // Remove invalid data
@@ -1118,17 +1123,13 @@ window.runNiftarApp = function(passedIndexData) {
         if (closeModalButton) closeModalButton.addEventListener('click', closeModalFunc);
         if (modalConfirmButton) modalConfirmButton.addEventListener('click', selectMishnahFromModal);
         if (showBartenuraCheckbox) showBartenuraCheckbox.addEventListener('change', () => {
-            // Re-render the currently displayed mishnah if one is selected
-             const currentTitle = mishnayotDisplay.querySelector('h3');
-             if (currentTitle && currentSelectedMishnayot.length > 0) {
-                 // Find the mishnah corresponding to the title (needs parsing or better state)
-                 // Simple approach: re-fetch the last selected mishnah from the list
-                  const sorted = [...currentSelectedMishnayot].sort((a, b) => a.letterIndex - b.letterIndex);
-                  if(sorted.length > 0) {
-                      const lastMishnah = sorted[sorted.length - 1];
-                      fetchAndDisplayMishnah(lastMishnah.masechetId, lastMishnah.perekNum, lastMishnah.mishnahNum);
-                  }
-             }
+            if (currentDisplayedMishnah) {
+                fetchAndDisplayMishnah(
+                    currentDisplayedMishnah.masechetId,
+                    currentDisplayedMishnah.perekNum,
+                    currentDisplayedMishnah.mishnahNum
+                );
+            }
         });
         window.addEventListener('click', function(event) { // Close modal on outside click
             if (modal && event.target === modal) {
