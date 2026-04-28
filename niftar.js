@@ -674,7 +674,7 @@ window.runNiftarApp = function(passedIndexData) {
             const neshamahLetters = ['נ', 'ש', 'מ', 'ה'];
             const masechetIdNeshamah = 57; // מקוואות
             const perekNumNeshamah = 7;
-            const startMishnahNumNeshamah = 3;
+            const startMishnahNumNeshamah = 4;
 
              if (!currentNiftarName) {
                 showError("יש להזין שם נפטר תחילה");
@@ -728,7 +728,7 @@ window.runNiftarApp = function(passedIndexData) {
             saveMishnayotToLocalStorage();
             renderLetterBoxes();
             renderSelectedMishnayotList();
-            showSuccess("נוספו משניות נשמ\"ה ממסכת מקוואות (פ\"ז מ\"ג-ו')");
+            showSuccess("נוספו משניות נשמ\"ה ממסכת מקוואות (פ\"ז מ\"ד-ז')");
         }
 
         function clearSelections() {
@@ -1048,7 +1048,7 @@ window.runNiftarApp = function(passedIndexData) {
              if (savedMishnah) {
                  try {
                      const parsedData = JSON.parse(savedMishnah);
-                      if (parsedData.text) { // Only display if text exists
+                      if (parsedData.text && (!showBartenuraCheckbox.checked || parsedData.commentary)) { // Only display if text exists
                          displayMishnahInModal(parsedData);
                          if (modalConfirmButton) modalConfirmButton.disabled = false;
                          return;
@@ -1064,6 +1064,7 @@ window.runNiftarApp = function(passedIndexData) {
             let apiSlugModal = masechetIdToApiName[masechetId] || masechetName.replace('מסכת ', '');
             if (apiSlugModal === 'Pirkei_Avot') apiSlugModal = 'Avot';
              const mishnahUrl = `https://www.sefaria.org/api/texts/Mishnah_${apiSlugModal}.${perekNum}.${mishnahNum}?context=0`;
+             const bartenuraUrl = `https://www.sefaria.org/api/texts/Bartenura_on_Mishnah_${apiSlugModal}.${perekNum}.${mishnahNum}?context=0`;
              console.log("Fetching for modal:", mishnahUrl);
              fetch(mishnahUrl)
                  .then(response => {
@@ -1077,6 +1078,20 @@ window.runNiftarApp = function(passedIndexData) {
                      }
                      if (textContent) {
                          const mishnayaData = { text: textContent, commentary: '' };
+                         if (showBartenuraCheckbox.checked) {
+                             return fetch(bartenuraUrl)
+                                 .then(response => response.ok ? response.json() : null)
+                                 .then(bartenuraData => {
+                                     if (bartenuraData && bartenuraData.he) {
+                                         mishnayaData.commentary = Array.isArray(bartenuraData.he)
+                                             ? bartenuraData.he.join('<br>')
+                                             : bartenuraData.he;
+                                     }
+                                     displayMishnahInModal(mishnayaData);
+                                     saveToLocalStorage(masechetId, perekNum, mishnahNum, mishnayaData); // Save fetched text
+                                     if (modalConfirmButton) modalConfirmButton.disabled = false;
+                                 });
+                         }
                          displayMishnahInModal(mishnayaData);
                          saveToLocalStorage(masechetId, perekNum, mishnahNum, mishnayaData); // Save fetched text
                          if (modalConfirmButton) modalConfirmButton.disabled = false;
@@ -1096,6 +1111,13 @@ window.runNiftarApp = function(passedIndexData) {
                 modalPreviewText.innerHTML = mishnayaData.text;
             } else {
                 modalPreviewText.innerHTML = '<span class="info-text">לא נמצא תוכן למשנה זו.</span>';
+            }
+            if (modalPreviewCommentary) {
+                if (mishnayaData && mishnayaData.commentary && showBartenuraCheckbox.checked) {
+                    modalPreviewCommentary.innerHTML = `<div class="bartenura-text"><strong>פירוש ברטנורא:</strong><br>${mishnayaData.commentary}</div>`;
+                } else {
+                    modalPreviewCommentary.innerHTML = '';
+                }
             }
         }
 
@@ -1123,6 +1145,14 @@ window.runNiftarApp = function(passedIndexData) {
         if (closeModalButton) closeModalButton.addEventListener('click', closeModalFunc);
         if (modalConfirmButton) modalConfirmButton.addEventListener('click', selectMishnahFromModal);
         if (showBartenuraCheckbox) showBartenuraCheckbox.addEventListener('change', () => {
+            if (modal && modal.style.display === 'block' && currentSelectedMishnahInModal) {
+                fetchAndDisplayMishnahInModal(
+                    currentSelectedMishnahInModal.masechetId,
+                    currentSelectedMishnahInModal.perekNum,
+                    currentSelectedMishnahInModal.mishnahNum
+                );
+                return;
+            }
             if (currentDisplayedMishnah) {
                 fetchAndDisplayMishnah(
                     currentDisplayedMishnah.masechetId,
