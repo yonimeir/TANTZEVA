@@ -10,6 +10,27 @@ function escapeHtml(str) {
     return d.innerHTML;
 }
 
+function getPrintContent() {
+    return document.getElementById('print-content');
+}
+
+function setToggleButtonState(buttonId, isOn, onText, offText) {
+    var btn = document.getElementById(buttonId);
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+    btn.classList.toggle('toggle-active', !!isOn);
+    if (onText && offText) {
+        btn.textContent = isOn ? onText : offText;
+    }
+}
+
+function printSaveFatherName(value) {
+    localStorage.setItem('niftarFatherName', (value || '').trim());
+    refreshElMalehYizkorIfActive();
+}
+
+window.printSaveFatherName = printSaveFatherName;
+
 /** פרקי תהילים נפוצים לביקור בקבר (כמו ברשימת «על הקבר» בדף התהילים) */
 var PRINT_CEMETERY_PSALM_CHAPTERS = [16, 17, 23, 25, 33, 49, 91, 104, 130, 142, 150];
 
@@ -24,14 +45,36 @@ var PRINT_EXTRA_ORDER = {
     elmalehyizkor: 40
 };
 
+function removeOrderedPrintExtra(kind) {
+    var canvas = getPrintContent();
+    if (!canvas) return false;
+    var existing = canvas.querySelector('.print-extra-insert[data-extra-kind="' + kind + '"]');
+    if (!existing) return false;
+    existing.remove();
+    setExtraToggleState(kind, false);
+    return true;
+}
+
+function setExtraToggleState(kind, isOn) {
+    var ids = {
+        cemetery: 'toggle-cemetery-btn',
+        kit119name: 'toggle-kit119name-btn',
+        kit119full: 'toggle-kit119full-btn',
+        elmalehyizkor: 'toggle-elmalehyizkor-btn'
+    };
+    if (ids[kind]) setToggleButtonState(ids[kind], isOn);
+}
+
 function insertOrderedPrintExtra(innerHtml, kind) {
     var order = PRINT_EXTRA_ORDER[kind];
     if (order == null) order = 99;
-    var canvas = document.getElementById('print-content');
+    var canvas = getPrintContent();
     if (!canvas) return;
+    removeOrderedPrintExtra(kind);
     var wrap = document.createElement('div');
     wrap.className = 'print-extra-insert';
     wrap.setAttribute('data-extra-order', String(order));
+    wrap.setAttribute('data-extra-kind', kind);
     wrap.innerHTML = innerHtml.trim();
 
     var inserts = canvas.querySelectorAll('.print-extra-insert');
@@ -48,6 +91,7 @@ function insertOrderedPrintExtra(innerHtml, kind) {
     } else {
         canvas.appendChild(wrap);
     }
+    setExtraToggleState(kind, true);
 }
 
 async function fetchPsalmsVerses(chapterNum) {
@@ -61,7 +105,7 @@ async function fetchPsalmsVerses(chapterNum) {
 function htmlPsalmsChapterBlock(heading, versesLines) {
     let inner = `<h3 class="print-extra-title">${heading}</h3><div class="print-extra-body mishnah-text-flow">`;
     versesLines.forEach(function(line, i) {
-        inner += '<p><span class="verse-num">' + (i + 1) + '.</span> ' + line + '</p>';
+        inner += '<p><span class="verse-num">' + numberToHebrew(i + 1) + '.</span> ' + line + '</p>';
     });
     inner += '</div>';
     return '<hr class="print-extra-sep"><div class="print-extra-block">' + inner + '</div>';
@@ -107,13 +151,14 @@ function buildKit119SectionsFromName(name) {
 }
 
 window.printAppendTehillimCemetery = async function() {
+    if (removeOrderedPrintExtra('cemetery')) return;
     var loading = document.getElementById('loading');
     if (loading) loading.style.display = 'flex';
     try {
         var chapters = PRINT_CEMETERY_PSALM_CHAPTERS;
         var batches = await Promise.all(chapters.map(function(ch) {
             return fetchPsalmsVerses(ch).then(function(verses) {
-                return htmlPsalmsChapterBlock('תהילים פרק ' + ch, verses);
+                return htmlPsalmsChapterBlock('תהילים פרק ' + formatHebrewNumeral(ch), verses);
             });
         }));
         insertOrderedPrintExtra(batches.join(''), 'cemetery');
@@ -126,6 +171,7 @@ window.printAppendTehillimCemetery = async function() {
 };
 
 window.printAppendKit119ByName = function() {
+    if (removeOrderedPrintExtra('kit119name')) return;
     var name = localStorage.getItem('niftarName') || '';
     var sections = buildKit119SectionsFromName(name);
     if (sections.length === 0) {
@@ -145,7 +191,7 @@ window.printAppendKit119ByName = function() {
             : ('אות מהשם: ' + s.letter + ' — פרק קי״ט');
         html += '<h3 class="print-extra-title">' + title + '</h3><div class="print-extra-body mishnah-text-flow">';
         for (var v = 0; v < s.verses.length; v++) {
-            html += '<p><span class="verse-num">' + (v + 1) + '.</span> ' + s.verses[v] + '</p>';
+            html += '<p><span class="verse-num">' + numberToHebrew(v + 1) + '.</span> ' + s.verses[v] + '</p>';
         }
         html += '</div>';
     }
@@ -156,6 +202,7 @@ window.printAppendKit119ByName = function() {
 };
 
 window.printAppendKit119Full = async function() {
+    if (removeOrderedPrintExtra('kit119full')) return;
     var loading = document.getElementById('loading');
     if (loading) loading.style.display = 'flex';
     try {
@@ -172,32 +219,169 @@ window.printAppendKit119Full = async function() {
     }
 };
 
-window.printAppendElMalehYizkor = function() {
+function buildElMalehYizkorBlock() {
     var name = localStorage.getItem('niftarName') || '';
+    var fatherName = localStorage.getItem('niftarFatherName') || '';
     var safe = escapeHtml(name || 'פלוני');
-    var block =
+    var safeFather = escapeHtml(fatherName || '______');
+    var fullName = safe + ' בן/בת ' + safeFather;
+    return (
         '<hr class="print-extra-sep">' +
         '<div class="print-extra-block">' +
         '<h3 class="print-extra-title">נוסח מורחב — אל מלא רחמים</h3>' +
         '<div class="print-extra-body" style="text-align:center;line-height:2">' +
         '<p>אֵל מָלֵא רַחֲמִים, שׁוֹכֵן בַּמְּרוֹמִים, הַמְצֵא מְנוּחָה נְכוֹנָה עַל כַּנְפֵי הַשְּׁכִינָה בְּמַעֲלוֹת קְדוֹשִׁים וּטְהוֹרִים כְּזֹהַר הָרָקִיעַ מַזְהִירִים, לְנִשְׁמַת <strong>' +
-        safe +
+        fullName +
         '</strong> שֶׁהָלַךְ/הָלְכָה לְעוֹלָמוֹ/לְעוֹלָמָהּ, בְּגַן עֵדֶן תְּהֵא מְנוּחָתוֹ/מְנוּחָתָהּ. לָכֵן בַּעַל הָרַחֲמִים יַסְתִּירֵהוּ/יַסְתִּירֶהָ בְּסֵתֶר כְּנָפָיו לְעוֹלָמִים, וְיִצְרֹר בִּצְרוֹר הַחַיִּים אֶת נִשְׁמָתוֹ/נִשְׁמָתָהּ, ה\' הוּא נַחֲלָתוֹ/נַחֲלָתָהּ, וְיָנוּחַ/וְתָנוּחַ בְּשָׁלוֹם עַל מִשְׁכָּבוֹ/מִשְׁכָּבָהּ, וְנֹאמַר אָמֵן.</p>' +
         '</div>' +
         '<h3 class="print-extra-title" style="margin-top:1em">יזכור</h3>' +
         '<div class="print-extra-body" style="text-align:center;line-height:2">' +
         '<p>יזכור אֱלֹהִים את נשמת <strong>' +
-        safe +
+        fullName +
         '</strong> שעלתה למרום; בשכר הצדקה והתפילה הנאמרים להלן לעילוי נשמתה, תהא נשמה צרורה בצרור החיים עם נשמות אברהם יצחק ויעקב ושאר הצדיקים והצדקניות בגן עדן, ונאמר אמן.</p>' +
         '</div>' +
-        '</div>';
-    insertOrderedPrintExtra(block, 'elmalehyizkor');
+        '</div>'
+    );
+}
+
+function refreshElMalehYizkorIfActive() {
+    var canvas = getPrintContent();
+    if (!canvas) return;
+    var existing = canvas.querySelector('.print-extra-insert[data-extra-kind="elmalehyizkor"]');
+    if (!existing) return;
+    existing.remove();
+    insertOrderedPrintExtra(buildElMalehYizkorBlock(), 'elmalehyizkor');
+}
+
+window.printAppendElMalehYizkor = function() {
+    if (removeOrderedPrintExtra('elmalehyizkor')) return;
+    insertOrderedPrintExtra(buildElMalehYizkorBlock(), 'elmalehyizkor');
 };
+
+window.printApplyFontFamily = function(fontFamily) {
+    var canvas = getPrintContent();
+    if (!canvas || !fontFamily) return;
+    canvas.style.fontFamily = fontFamily;
+    localStorage.setItem('printFontFamily', fontFamily);
+};
+
+window.printApplyFontSize = function(sizeValue) {
+    var size = parseInt(sizeValue, 10);
+    if (isNaN(size)) return;
+    size = Math.max(10, Math.min(32, size));
+    var canvas = getPrintContent();
+    if (!canvas) return;
+    canvas.style.fontSize = size + 'pt';
+    localStorage.setItem('printFontSize', String(size));
+    var input = document.getElementById('print-font-size');
+    if (input) input.value = String(size);
+};
+
+window.printDownloadWord = function() {
+    var canvas = getPrintContent();
+    if (!canvas) return;
+    var niftarName = localStorage.getItem('niftarName') || 'דף-לימוד';
+    var safeFileName = niftarName.replace(/[\\/:*?"<>|]+/g, '').trim() || 'דף-לימוד';
+    var html =
+        '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">' +
+        '<style>' +
+        'body{direction:rtl;text-align:right;font-family:David,serif;font-size:16pt;line-height:1.6;color:#000;}' +
+        'h1,h2,h3{text-align:center}.mishnah-title{font-weight:bold;text-decoration:underline;margin-top:1em}' +
+        '.bartenura-block{font-size:13pt;color:#444;margin-top:10px;padding-right:15px;border-right:3px solid #ccc}' +
+        '.print-extra-body{font-size:13pt}.verse-num{font-weight:bold;margin-left:.25em}' +
+        '</style></head><body>' +
+        canvas.innerHTML +
+        '</body></html>';
+    var blob = new Blob(['\ufeff', html], { type: 'application/msword;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = safeFileName + '.doc';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(function() {
+        URL.revokeObjectURL(url);
+    }, 1000);
+};
+
+window.printToggleCommand = function(command) {
+    document.execCommand(command, false, null);
+    updatePrintCommandButtons(command);
+};
+
+window.toggleBartenura = function() {
+    var canvas = getPrintContent();
+    if (!canvas) return;
+    var isHidden = canvas.classList.toggle('hide-bartenura');
+    localStorage.setItem('printHideBartenura', isHidden ? '1' : '0');
+    setToggleButtonState('toggle-bart-btn', !isHidden, 'ברטנורא: דלוק', 'ברטנורא: כבוי');
+};
+
+function updatePrintCommandButtons(lastCommand) {
+    var buttons = document.querySelectorAll('.command-toggle[data-command]');
+    buttons.forEach(function(btn) {
+        var command = btn.getAttribute('data-command');
+        var isOn = false;
+        try {
+            isOn = document.queryCommandState(command);
+        } catch (e) {
+            isOn = false;
+        }
+        if (!isOn && lastCommand && command === lastCommand) {
+            // יישורים לא תמיד מדווחים עקבית בדפדפנים; לפחות הלחיצה האחרונה תסומן.
+            isOn = command.indexOf('justify') === 0;
+        }
+        if (isOn && command.indexOf('justify') === 0) {
+            buttons.forEach(function(other) {
+                if (other !== btn && (other.getAttribute('data-command') || '').indexOf('justify') === 0) {
+                    other.setAttribute('aria-pressed', 'false');
+                    other.classList.remove('toggle-active');
+                }
+            });
+        }
+        btn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+        btn.classList.toggle('toggle-active', !!isOn);
+    });
+}
+
+function setupPrintControls() {
+    var savedFont = localStorage.getItem('printFontFamily');
+    var savedSize = localStorage.getItem('printFontSize');
+    var savedFather = localStorage.getItem('niftarFatherName') || '';
+    var fontSelect = document.getElementById('print-font-family');
+    var sizeInput = document.getElementById('print-font-size');
+    var fatherInput = document.getElementById('niftar-father-name');
+
+    if (savedFont) {
+        if (fontSelect) fontSelect.value = savedFont;
+        window.printApplyFontFamily(savedFont);
+    }
+    if (savedSize) {
+        if (sizeInput) sizeInput.value = savedSize;
+        window.printApplyFontSize(savedSize);
+    }
+    if (fatherInput) {
+        fatherInput.value = savedFather;
+        fatherInput.addEventListener('input', function() {
+            printSaveFatherName(this.value);
+        });
+    }
+
+    var isBartenuraVisible = localStorage.getItem('printHideBartenura') !== '1';
+    setToggleButtonState('toggle-bart-btn', isBartenuraVisible, 'ברטנורא: דלוק', 'ברטנורא: כבוי');
+    document.addEventListener('selectionchange', function() {
+        if (document.activeElement && document.activeElement.id === 'print-content') {
+            updatePrintCommandButtons();
+        }
+    });
+}
 
 // טעינת מידע בטעינת העמוד
 document.addEventListener('DOMContentLoaded', async function() {
     var printContent = document.getElementById('print-content');
     var loadingOverlay = document.getElementById('loading');
+    setupPrintControls();
 
     try {
         var niftarName = localStorage.getItem('niftarName') || '';
@@ -220,8 +404,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             printContent.innerHTML = htmlContent;
             if (localStorage.getItem('printHideBartenura') === '1') {
                 printContent.classList.add('hide-bartenura');
-                var bartBtn0 = document.getElementById('toggle-bart-btn');
-                if (bartBtn0) bartBtn0.innerHTML = '📖 הצג ברטנורא';
+                setToggleButtonState('toggle-bart-btn', false, 'ברטנורא: דלוק', 'ברטנורא: כבוי');
             }
             return;
         }
@@ -343,8 +526,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (localStorage.getItem('printHideBartenura') === '1') {
             printContent.classList.add('hide-bartenura');
-            var bartBtn = document.getElementById('toggle-bart-btn');
-            if (bartBtn) bartBtn.innerHTML = '📖 הצג ברטנורא';
+            setToggleButtonState('toggle-bart-btn', false, 'ברטנורא: דלוק', 'ברטנורא: כבוי');
         }
     } catch (e) {
         console.error('שגיאה בהכנת עמוד ההדפסה:', e);
@@ -465,4 +647,11 @@ function numberToHebrew(num) {
     ];
 
     return num <= 100 ? hebrewLetters[num] : String(num);
+}
+
+function formatHebrewNumeral(num) {
+    var text = numberToHebrew(num);
+    if (!text || text === String(num)) return text;
+    if (text.length === 1) return text + '׳';
+    return text.slice(0, -1) + '״' + text.slice(-1);
 }

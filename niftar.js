@@ -393,6 +393,11 @@ window.runNiftarApp = function(passedIndexData) {
                             ${masechetName}
                             <div>פרק ${hebrewPerek}, משנה ${hebrewMishnah}</div>
                         </div>
+                        <div class="letter-box-actions" aria-label="פעולות למשנה שנבחרה">
+                            <button type="button" class="letter-action-button view-button" title="הצג משנה">הצג</button>
+                            <button type="button" class="letter-action-button replace-button" title="החלף משנה">החלף</button>
+                            <button type="button" class="letter-action-button remove-button" title="הסר משנה">הסר</button>
+                        </div>
                         ${removeButtonHTML}
                     `;
                 } else {
@@ -419,6 +424,32 @@ window.runNiftarApp = function(passedIndexData) {
                             }
                         }
                         renderLetterBoxes(); 
+                        renderSelectedMishnayotList();
+                    });
+                }
+
+                const viewActionButton = letterBox.querySelector('.letter-action-button.view-button');
+                const replaceActionButton = letterBox.querySelector('.letter-action-button.replace-button');
+                const removeActionButton = letterBox.querySelector('.letter-action-button.remove-button');
+                if (selectedMishnah && viewActionButton) {
+                    viewActionButton.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        fetchAndDisplayMishnah(selectedMishnah.masechetId, selectedMishnah.perekNum, selectedMishnah.mishnahNum);
+                        contentDisplayArea.style.display = 'block';
+                        contentDisplayArea.scrollIntoView({ behavior: 'smooth' });
+                    });
+                }
+                if (selectedMishnah && replaceActionButton) {
+                    replaceActionButton.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        openMishnayotModal(letter, i);
+                    });
+                }
+                if (selectedMishnah && removeActionButton) {
+                    removeActionButton.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        removeMishnah(i);
+                        renderLetterBoxes();
                         renderSelectedMishnayotList();
                     });
                 }
@@ -695,6 +726,12 @@ window.runNiftarApp = function(passedIndexData) {
         }
 
         function renderSelectedMishnayotList() {
+            if (!selectedMishnayotList) {
+                if (copySelectedButton) {
+                    copySelectedButton.style.display = currentSelectedMishnayot.length > 0 ? 'inline-block' : 'none';
+                }
+                return;
+            }
             selectedMishnayotList.innerHTML = ''; // Clear previous list/table
             if (currentSelectedMishnayot.length === 0) {
                 selectedMishnayotList.innerHTML = '<div class="empty-message">טרם נבחרו משניות</div>';

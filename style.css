@@ -1183,6 +1183,56 @@ button:hover,
     background: #dc2626 !important;
 }
 
+.letter-box-actions {
+    position: absolute;
+    inset-inline: 8px;
+    bottom: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.letter-box.selected:hover .letter-box-actions,
+.letter-box.selected:focus-within .letter-box-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.letter-action-button {
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 5px 8px;
+    border-radius: 999px;
+    border: 0 !important;
+    box-shadow: 0 6px 12px rgba(15, 23, 42, 0.16) !important;
+    color: #ffffff !important;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.letter-action-button.view-button {
+    background: #2563eb !important;
+}
+
+.letter-action-button.replace-button {
+    background: #d97706 !important;
+}
+
+.letter-action-button.remove-button {
+    background: #dc2626 !important;
+}
+
+.letter-box.selected {
+    padding-bottom: 30px;
+}
+
 .empty-message {
     padding: 24px;
     color: #64748b;

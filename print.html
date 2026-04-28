@@ -41,6 +41,20 @@
             border-color: #9fa8da !important;
             color: #0d1642 !important;
         }
+        .toolbar button.toggle-btn[aria-pressed="true"] {
+            background: #18345d !important;
+            border-color: #18345d !important;
+            color: #ffffff !important;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.2);
+        }
+        .toolbar button.toggle-btn[aria-pressed="false"]::before {
+            content: "○ ";
+            font-weight: bold;
+        }
+        .toolbar button.toggle-btn[aria-pressed="true"]::before {
+            content: "● ";
+            font-weight: bold;
+        }
         
         .toolbar .primary-btn { background: #3f51b5 !important; color: #fff !important; border-color: #3f51b5 !important; font-weight: bold; }
         .toolbar .primary-btn:hover { background: #303f9f !important; }
@@ -49,6 +63,30 @@
         .toolbar .back-btn:hover { background: #d32f2f !important; }
 
         .toolbar .sep { height: 30px; width: 1px; background: #ccc; }
+        .toolbar-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #37474f;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .toolbar-control select,
+        .toolbar-control input {
+            margin: 0;
+            border: 1px solid #cfd8dc;
+            border-radius: 6px;
+            background: #fff;
+            color: #263238;
+            padding: 6px 8px;
+            font-size: 13px;
+        }
+        .toolbar-control input[type="number"] {
+            width: 64px;
+        }
+        .toolbar-control input[type="text"] {
+            width: 150px;
+        }
 
         .toolbar-secondary {
             flex-wrap: wrap;
@@ -165,25 +203,44 @@
     <div class="toolbar no-print">
         <button class="back-btn" onclick="window.history.back()">↩ חזור לבחירה</button>
         <div class="sep"></div>
-        <button onclick="document.execCommand('bold', false, null)"><b>B</b> מודגש</button>
-        <button onclick="document.execCommand('italic', false, null)"><i>I</i> נטוי</button>
-        <button onclick="document.execCommand('underline', false, null)"><u>U</u> קו תחתון</button>
+        <button type="button" class="toggle-btn command-toggle" data-command="bold" aria-pressed="false" onclick="window.printToggleCommand && window.printToggleCommand('bold')"><b>B</b> מודגש</button>
+        <button type="button" class="toggle-btn command-toggle" data-command="italic" aria-pressed="false" onclick="window.printToggleCommand && window.printToggleCommand('italic')"><i>I</i> נטוי</button>
+        <button type="button" class="toggle-btn command-toggle" data-command="underline" aria-pressed="false" onclick="window.printToggleCommand && window.printToggleCommand('underline')"><u>U</u> קו תחתון</button>
         <div class="sep"></div>
-        <button onclick="document.execCommand('justifyRight', false, null)">יישור לימין</button>
-        <button onclick="document.execCommand('justifyCenter', false, null)">יישור למרכז</button>
-        <button onclick="document.execCommand('justifyLeft', false, null)">יישור לשמאל</button>
+        <button type="button" class="toggle-btn command-toggle" data-command="justifyRight" aria-pressed="false" onclick="window.printToggleCommand && window.printToggleCommand('justifyRight')">יישור לימין</button>
+        <button type="button" class="toggle-btn command-toggle" data-command="justifyCenter" aria-pressed="false" onclick="window.printToggleCommand && window.printToggleCommand('justifyCenter')">יישור למרכז</button>
+        <button type="button" class="toggle-btn command-toggle" data-command="justifyLeft" aria-pressed="false" onclick="window.printToggleCommand && window.printToggleCommand('justifyLeft')">יישור לשמאל</button>
+        <div class="sep"></div>
+        <label class="toolbar-control">
+            סוג גופן
+            <select id="print-font-family" onchange="window.printApplyFontFamily && window.printApplyFontFamily(this.value)">
+                <option value="'David', 'Frank Ruhl Libre', serif">דוד / ספר</option>
+                <option value="'Frank Ruhl Libre', 'David', serif">פרנק ריהל</option>
+                <option value="'Assistant', 'Heebo', Arial, sans-serif">אסיסטנט</option>
+                <option value="Arial, sans-serif">Arial</option>
+            </select>
+        </label>
+        <label class="toolbar-control">
+            גודל
+            <input id="print-font-size" type="number" min="10" max="32" step="1" value="16" onchange="window.printApplyFontSize && window.printApplyFontSize(this.value)">
+        </label>
         <div class="sep"></div>
         <button class="primary-btn" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
+        <button type="button" class="primary-btn" onclick="window.printDownloadWord && window.printDownloadWord()">⬇ הורד Word</button>
     </div>
 
     <div class="toolbar toolbar-secondary no-print">
         <span class="toolbar-caption">תוספות להדפסה (מתווספות לדף בלבד)</span>
         <span class="toolbar-caption toolbar-caption-hint">הסדר בדף נקבע לפי נוהג הקבורה — לא לפי סדר הלחיצות: תהילים על הקבר, קיט לפי שם, קיט מלא, אל מלא רחמים ויזכור</span>
-        <button type="button" id="toggle-bart-btn" onclick="toggleBartenura()">📕 הסתר ברטנורא</button>
-        <button type="button" onclick="window.printAppendTehillimCemetery && window.printAppendTehillimCemetery()">תהילים על הקבר</button>
-        <button type="button" onclick="window.printAppendKit119ByName && window.printAppendKit119ByName()">קיט לפי שם הנפטר</button>
-        <button type="button" onclick="window.printAppendKit119Full && window.printAppendKit119Full()">קיט מלא</button>
-        <button type="button" onclick="window.printAppendElMalehYizkor && window.printAppendElMalehYizkor()">אל מלא רחמים ויזכור</button>
+        <label class="toolbar-control">
+            שם האב
+            <input id="niftar-father-name" type="text" placeholder="למשל: יעקב" onchange="window.printSaveFatherName && window.printSaveFatherName(this.value)">
+        </label>
+        <button type="button" id="toggle-bart-btn" class="toggle-btn" aria-pressed="true" onclick="window.toggleBartenura && window.toggleBartenura()">ברטנורא: דלוק</button>
+        <button type="button" id="toggle-cemetery-btn" class="toggle-btn" aria-pressed="false" onclick="window.printAppendTehillimCemetery && window.printAppendTehillimCemetery()">תהילים על הקבר</button>
+        <button type="button" id="toggle-kit119name-btn" class="toggle-btn" aria-pressed="false" onclick="window.printAppendKit119ByName && window.printAppendKit119ByName()">קיט לפי שם הנפטר</button>
+        <button type="button" id="toggle-kit119full-btn" class="toggle-btn" aria-pressed="false" onclick="window.printAppendKit119Full && window.printAppendKit119Full()">קיט מלא</button>
+        <button type="button" id="toggle-elmalehyizkor-btn" class="toggle-btn" aria-pressed="false" onclick="window.printAppendElMalehYizkor && window.printAppendElMalehYizkor()">אל מלא רחמים ויזכור</button>
     </div>
 
     <!-- משטח העבודה נטו -->
@@ -194,14 +251,5 @@
     <script src="mishnah_mappings.js"></script>
     <script src="tehillim119_data.js"></script>
     <script src="print.js"></script>
-    <script>
-        function toggleBartenura() {
-            const canvas = document.getElementById('print-content');
-            const btn = document.getElementById('toggle-bart-btn');
-            const isHidden = canvas.classList.toggle('hide-bartenura');
-            localStorage.setItem('printHideBartenura', isHidden ? '1' : '0');
-            btn.innerHTML = isHidden ? '📖 הצג ברטנורא' : '📕 הסתר ברטנורא';
-        }
-    </script>
 </body>
 </html>
