@@ -508,13 +508,27 @@ window.runNiftarApp = function(passedIndexData) {
 
        function openMishnayotModal(letter, letterIndex) {
             console.log(`Opening modal for letter '${letter}' at index ${letterIndex}`);
+            if (!modal || !modalLetterSpan || !modalMishnahList || !modalPreviewTitle || !modalPreviewText) {
+                console.error('Missing modal elements:', {
+                    modal,
+                    modalLetterSpan,
+                    modalMishnahList,
+                    modalPreviewTitle,
+                    modalPreviewText,
+                    modalPreviewCommentary
+                });
+                showError('שגיאה בפתיחת חלון בחירת המשנה. נסה לרענן את הדף.');
+                return;
+            }
             currentModalLetterForReplacement = letter;
             currentModalLetterIndex = letterIndex;
             modalLetterSpan.textContent = letter;
             modalMishnahList.innerHTML = '';
             modalPreviewTitle.textContent = 'בחרו משנה מהרשימה';
             modalPreviewText.innerHTML = '';
-            modalPreviewCommentary.innerHTML = '';
+            if (modalPreviewCommentary) {
+                modalPreviewCommentary.innerHTML = '';
+            }
             currentSelectedMishnahInModal = null;
             if (modalConfirmButton) modalConfirmButton.disabled = true;
 
