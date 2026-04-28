@@ -746,11 +746,69 @@ header h1 {
     border-color: #3f51b5;
 }
 
+.mishnah-list-item {
+    position: relative;
+    padding: 10px 12px;
+    margin: 6px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #ffffff;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mishnah-list-item:hover {
+    background: #f8fbff;
+    border-color: #9fb7e8;
+}
+
+.mishnah-list-item.selected {
+    background: #ddeeff;
+    border-color: #18345d;
+    box-shadow: 0 0 0 2px rgba(24, 52, 93, 0.12);
+}
+
+.mishnah-list-item .selected-indicator {
+    display: none;
+    margin-right: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #18345d;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mishnah-list-item.selected .selected-indicator {
+    display: inline-block;
+}
+
 .modal-preview {
     background-color: #f9f9f9;
     padding: 15px;
     border-radius: 4px;
     margin-bottom: 20px;
+}
+
+#modal-preview {
+    border: 1px solid #dbeafe;
+    background: #f8fbff;
+}
+
+#modal-preview-title {
+    color: #18345d;
+    margin-bottom: 10px;
+}
+
+#modal-preview-text {
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 12px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #111827;
+    line-height: 1.9;
+    font-size: 1.08em;
 }
 
 .modal-actions {

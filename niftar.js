@@ -526,6 +526,12 @@ window.runNiftarApp = function(passedIndexData) {
             modalMishnahList.innerHTML = '';
             modalPreviewTitle.textContent = 'בחרו משנה מהרשימה';
             modalPreviewText.innerHTML = '';
+            if (modalPreview) {
+                modalPreview.style.display = 'block';
+            }
+            if (modalPreviewContent) {
+                modalPreviewContent.style.display = 'block';
+            }
             if (modalPreviewCommentary) {
                 modalPreviewCommentary.innerHTML = '';
             }
@@ -580,11 +586,15 @@ window.runNiftarApp = function(passedIndexData) {
                     mishnayaElement.dataset.mishnahNum = mishnahNum;
                     const hebrewPerek = convertToHebrewLetter(perekNum);
                     const hebrewMishnah = convertToHebrewLetter(mishnahNum);
-                    mishnayaElement.innerHTML = `<strong>פרק ${hebrewPerek} משנה ${hebrewMishnah}</strong>`;
+                    mishnayaElement.innerHTML = `<strong>פרק ${hebrewPerek} משנה ${hebrewMishnah}</strong><span class="selected-indicator">נבחר</span>`;
 
                     mishnayaElement.addEventListener('click', function() {
-                        document.querySelectorAll('.mishnah-list-item').forEach(item => item.classList.remove('selected'));
+                        document.querySelectorAll('.mishnah-list-item').forEach(item => {
+                            item.classList.remove('selected');
+                            item.setAttribute('aria-selected', 'false');
+                        });
                         this.classList.add('selected');
+                        this.setAttribute('aria-selected', 'true');
                         currentSelectedMishnahInModal = {
                             masechetId: masechetId,
                             perekNum: perekNum,
@@ -1017,9 +1027,10 @@ window.runNiftarApp = function(passedIndexData) {
         }
 
         function fetchAndDisplayMishnahInModal(masechetId, perekNum, mishnahNum) {
+             if (modalPreview) modalPreview.style.display = 'block';
              modalPreviewContent.style.display = 'block';
              modalPreviewTitle.textContent = 'טוען...';
-             modalPreviewText.innerHTML = '';
+             modalPreviewText.innerHTML = '<span class="info-text">טוען את טקסט המשנה...</span>';
              if (modalConfirmButton) modalConfirmButton.disabled = true;
 
             const masechetName = masechetIdToDisplayName[masechetId] || `מסכת ${masechetId}`;
